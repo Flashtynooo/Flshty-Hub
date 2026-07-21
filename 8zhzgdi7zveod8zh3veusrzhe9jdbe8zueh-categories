@@ -10,7 +10,6 @@ return function(Window)
 	print("Flshty Categories chargé")
 
 
-
 	local Main = Instance.new("Frame")
 	Main.Name = "Main"
 	Main.Size = UDim2.new(1,0,1,0)
@@ -50,43 +49,9 @@ return function(Window)
 
 
 
-	-- Connexion avec le menu
+	-- Donne la catégorie active au Menu
 
 	Window.CurrentCategory = Main
-
-
-
-	-- Quand paramètres s'ouvre, on cache Main
-
-	local SettingsButton = Window.SettingsButton
-	local SettingsPage = Window.SettingsPage
-
-
-	if SettingsButton and SettingsPage then
-
-
-		SettingsButton.MouseButton1Click:Connect(function()
-
-
-			if SettingsPage.Visible then
-
-				SettingsPage.Visible = false
-				Main.Visible = true
-
-
-			else
-
-				Main.Visible = false
-				SettingsPage.Visible = true
-
-
-			end
-
-
-		end)
-
-
-	end
 
 
 end
