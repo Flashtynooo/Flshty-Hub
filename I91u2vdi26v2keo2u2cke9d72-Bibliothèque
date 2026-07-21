@@ -4,26 +4,17 @@
 -- Modification et redistribution interdites.
 
 local Flshty = {}
+
 Flshty.__index = Flshty
 
 
--- Couleurs par défaut
 Flshty.Theme = {
-	MainColor = Color3.fromRGB(120,0,255),
-	Background = Color3.fromRGB(20,20,25),
-	TopBar = Color3.fromRGB(30,30,35),
+	Background = Color3.fromRGB(10,10,15),
+	TopBar = Color3.fromRGB(20,10,30),
+	Purple = Color3.fromRGB(130,0,255),
+	Pink = Color3.fromRGB(255,0,170),
 	Text = Color3.fromRGB(255,255,255)
 }
-
-
-function Flshty:SetTheme(theme)
-
-	for i,v in pairs(theme) do
-		Flshty.Theme[i] = v
-	end
-
-end
-
 
 
 function Flshty:CreateWindow(options)
@@ -40,14 +31,12 @@ function Flshty:CreateWindow(options)
 	local UserInputService = game:GetService("UserInputService")
 
 
-	-- ScreenGui
 	local ScreenGui = Instance.new("ScreenGui")
 	ScreenGui.Name = "Flshty"
 	ScreenGui.Parent = CoreGui
 
 
 
-	-- Fenêtre
 	local MainFrame = Instance.new("Frame")
 	MainFrame.Name = "Window"
 	MainFrame.Size = UDim2.new(0,450,0,300)
@@ -58,18 +47,17 @@ function Flshty:CreateWindow(options)
 
 
 	local Corner = Instance.new("UICorner")
-	Corner.CornerRadius = UDim.new(0,12)
+	Corner.CornerRadius = UDim.new(0,14)
 	Corner.Parent = MainFrame
 
 
 	local Stroke = Instance.new("UIStroke")
-	Stroke.Color = Flshty.Theme.MainColor
-	Stroke.Thickness = 2
+	Stroke.Thickness = 3
+	Stroke.Color = Flshty.Theme.Pink
 	Stroke.Parent = MainFrame
 
 
 
-	-- TopBar
 	local TopBar = Instance.new("Frame")
 	TopBar.Name = "TopBar"
 	TopBar.Size = UDim2.new(1,0,0,40)
@@ -78,12 +66,11 @@ function Flshty:CreateWindow(options)
 
 
 	local TopCorner = Instance.new("UICorner")
-	TopCorner.CornerRadius = UDim.new(0,12)
+	TopCorner.CornerRadius = UDim.new(0,14)
 	TopCorner.Parent = TopBar
 
 
 
-	-- Titre
 	local Title = Instance.new("TextLabel")
 	Title.Size = UDim2.new(1,-100,1,0)
 	Title.Position = UDim2.new(0,15,0,0)
@@ -97,30 +84,27 @@ function Flshty:CreateWindow(options)
 
 
 
-	-- Bouton réduire
 	local Minimize = Instance.new("TextButton")
 	Minimize.Size = UDim2.new(0,40,0,40)
 	Minimize.Position = UDim2.new(1,-80,0,0)
-	Minimize.Text = "─"
 	Minimize.BackgroundTransparency = 1
-	Minimize.TextColor3 = Flshty.Theme.Text
+	Minimize.Text = "─"
 	Minimize.TextSize = 25
+	Minimize.TextColor3 = Flshty.Theme.Text
 	Minimize.Parent = TopBar
 
 
 
-	-- Settings (préparation)
 	local Settings = Instance.new("TextButton")
 	Settings.Size = UDim2.new(0,40,0,40)
 	Settings.Position = UDim2.new(1,-40,0,0)
-	Settings.Text = "⚙️"
 	Settings.BackgroundTransparency = 1
+	Settings.Text = "⚙️"
 	Settings.TextColor3 = Flshty.Theme.Text
 	Settings.Parent = TopBar
 
 
 
-	-- Home
 	local Home = Instance.new("Frame")
 	Home.Name = "Home"
 	Home.Size = UDim2.new(1,0,1,-40)
@@ -130,7 +114,6 @@ function Flshty:CreateWindow(options)
 
 
 
-	-- Bouton flottant
 	local Floating = Instance.new("TextButton")
 	Floating.Name = "FlshtyButton"
 	Floating.Size = UDim2.new(0,80,0,40)
@@ -143,27 +126,23 @@ function Flshty:CreateWindow(options)
 
 
 	local FloatCorner = Instance.new("UICorner")
-	FloatCorner.CornerRadius = UDim.new(0,10)
+	FloatCorner.CornerRadius = UDim.new(0,12)
 	FloatCorner.Parent = Floating
 
 
-
-	-- Lock bouton flottant
-	local FloatingLocked = false
-
-
-	function Window:SetFloatingButtonLock(value)
-		FloatingLocked = value
-	end
+	local FloatStroke = Instance.new("UIStroke")
+	FloatStroke.Color = Flshty.Theme.Purple
+	FloatStroke.Thickness = 2
+	FloatStroke.Parent = Floating
 
 
 
-	-- Drag hub
-	local function MakeDrag(object,target)
+	-- DRAG CORRIGÉ
+	local function Drag(object,target)
 
 		local dragging = false
-		local start
-		local pos
+		local dragStart
+		local startPosition
 
 
 		object.InputBegan:Connect(function(input)
@@ -172,27 +151,35 @@ function Flshty:CreateWindow(options)
 			or input.UserInputType == Enum.UserInputType.Touch then
 
 				dragging = true
-				start = input.Position
-				pos = target.Position
+				dragStart = input.Position
+				startPosition = target.Position
+
+				input.Changed:Connect(function()
+
+					if input.UserInputState == Enum.UserInputState.End then
+						dragging = false
+					end
+
+				end)
 
 			end
 
 		end)
 
 
-		UserInputService.InputChanged:Connect(function(input)
+		object.InputChanged:Connect(function(input)
 
 			if dragging and
 			(input.UserInputType == Enum.UserInputType.MouseMovement
 			or input.UserInputType == Enum.UserInputType.Touch) then
 
-				local delta = input.Position - start
+				local delta = input.Position - dragStart
 
 				target.Position = UDim2.new(
-					pos.X.Scale,
-					pos.X.Offset + delta.X,
-					pos.Y.Scale,
-					pos.Y.Offset + delta.Y
+					startPosition.X.Scale,
+					startPosition.X.Offset + delta.X,
+					startPosition.Y.Scale,
+					startPosition.Y.Offset + delta.Y
 				)
 
 			end
@@ -202,12 +189,9 @@ function Flshty:CreateWindow(options)
 	end
 
 
-	MakeDrag(TopBar,MainFrame)
 
-
-
-	-- Drag bouton flottant
-	MakeDrag(Floating,Floating)
+	Drag(TopBar,MainFrame)
+	Drag(Floating,Floating)
 
 
 
@@ -217,6 +201,7 @@ function Flshty:CreateWindow(options)
 		Floating.Visible = true
 
 	end)
+
 
 
 	Floating.MouseButton1Click:Connect(function()
