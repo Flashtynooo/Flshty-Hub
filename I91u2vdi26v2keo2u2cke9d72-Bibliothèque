@@ -17,6 +17,14 @@ Flshty.Theme = {
 }
 
 
+-- Extensions Flshty
+
+local SettingsURL = "https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/8z9zi3bbebdis8egg4kzod92iehjeozuh2i-parametres"
+
+local CategoriesURL = "https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/8zhzgdi7zveod8zh3veusrzhe9jdbe8zueh-categories"
+
+
+
 function Flshty:CreateWindow(options)
 
 	options = options or {}
@@ -27,8 +35,9 @@ function Flshty:CreateWindow(options)
 	setmetatable(Window,Flshty)
 
 
+
 	local CoreGui = game:GetService("CoreGui")
-	local UserInputService = game:GetService("UserInputService")
+
 
 
 	local ScreenGui = Instance.new("ScreenGui")
@@ -46,9 +55,11 @@ function Flshty:CreateWindow(options)
 	MainFrame.Parent = ScreenGui
 
 
+
 	local Corner = Instance.new("UICorner")
 	Corner.CornerRadius = UDim.new(0,14)
 	Corner.Parent = MainFrame
+
 
 
 	local Stroke = Instance.new("UIStroke")
@@ -65,11 +76,6 @@ function Flshty:CreateWindow(options)
 	TopBar.Parent = MainFrame
 
 
-	local TopCorner = Instance.new("UICorner")
-	TopCorner.CornerRadius = UDim.new(0,14)
-	TopCorner.Parent = TopBar
-
-
 
 	local Title = Instance.new("TextLabel")
 	Title.Size = UDim2.new(1,-100,1,0)
@@ -79,7 +85,6 @@ function Flshty:CreateWindow(options)
 	Title.TextColor3 = Flshty.Theme.Text
 	Title.TextSize = 18
 	Title.Font = Enum.Font.GothamBold
-	Title.TextXAlignment = Enum.TextXAlignment.Left
 	Title.Parent = TopBar
 
 
@@ -96,7 +101,7 @@ function Flshty:CreateWindow(options)
 
 
 	local Settings = Instance.new("TextButton")
-	Settings.Size = UDim2.new(0,50,0,50)
+	Settings.Size = UDim2.new(0,40,0,40)
 	Settings.Position = UDim2.new(1,-40,0,0)
 	Settings.BackgroundTransparency = 1
 	Settings.Text = "⚙️"
@@ -125,9 +130,11 @@ function Flshty:CreateWindow(options)
 	Floating.Parent = ScreenGui
 
 
+
 	local FloatCorner = Instance.new("UICorner")
 	FloatCorner.CornerRadius = UDim.new(0,12)
 	FloatCorner.Parent = Floating
+
 
 
 	local FloatStroke = Instance.new("UIStroke")
@@ -137,7 +144,6 @@ function Flshty:CreateWindow(options)
 
 
 
-	-- DRAG CORRIGÉ
 	local function Drag(object,target)
 
 		local dragging = false
@@ -169,9 +175,7 @@ function Flshty:CreateWindow(options)
 
 		object.InputChanged:Connect(function(input)
 
-			if dragging and
-			(input.UserInputType == Enum.UserInputType.MouseMovement
-			or input.UserInputType == Enum.UserInputType.Touch) then
+			if dragging then
 
 				local delta = input.Position - dragStart
 
@@ -217,34 +221,31 @@ function Flshty:CreateWindow(options)
 	Window.Frame = MainFrame
 	Window.Home = Home
 	Window.FloatingButton = Floating
-    Window.SettingsButton = Settings
-
--- Liens des extensions Flshty
-
-local SettingsURL = "https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/8z9zi3bbebdis8egg4kzod92iehjeozuh2i-parametres"
-
-local CategoriesURL = "https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/8zhzgdi7zveod8zh3veusrzhe9jdbe8zueh-categories"
-
--- Chargement paramètres
-
-local SettingsLoader = loadstring(game:HttpGet(SettingsURL))
-
-if SettingsLoader then
-	SettingsLoader(Window)
-end
+	Window.SettingsButton = Settings
 
 
 
--- Chargement catégories
+	-- Chargement Paramètres
 
-local CategoriesLoader = loadstring(game:HttpGet(CategoriesURL))
+	local SettingsLoader = loadstring(game:HttpGet(SettingsURL))
 
-if CategoriesLoader then
-	CategoriesLoader(Window)
-end
+	if SettingsLoader then
+		SettingsLoader()(Window)
+	end
 
 
-return Window
+
+	-- Chargement Catégories
+
+	local CategoriesLoader = loadstring(game:HttpGet(CategoriesURL))
+
+	if CategoriesLoader then
+		CategoriesLoader()(Window)
+	end
+
+
+
+	return Window
 
 end
 
