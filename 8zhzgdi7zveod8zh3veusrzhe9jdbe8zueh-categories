@@ -1,8 +1,12 @@
 -- Flshty-Hub Categories
 -- Créé par Flashtynooo
 
+-- Flshty-Hub Categories
+-- Créé par Flashtynooo
+
 return function(Window)
 
+	print("Flshty Categories chargé")
 
 	local Main = Instance.new("Frame")
 	Main.Name = "Main"
