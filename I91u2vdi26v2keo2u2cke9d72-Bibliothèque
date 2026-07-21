@@ -242,8 +242,11 @@ local CategoriesLoader = loadstring(game:HttpGet(CategoriesURL))
 if CategoriesLoader then
 	CategoriesLoader(Window)
 end
-	return end
-nd
+
+
+return Window
+
+end
 
 
 return Flshty
