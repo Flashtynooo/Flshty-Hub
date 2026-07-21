@@ -10,50 +10,79 @@ return function(Window)
 	print("Flshty Categories chargé")
 
 
-	local Main = Instance.new("Frame")
-	Main.Name = "Main"
-	Main.Size = UDim2.new(1,0,1,0)
-	Main.BackgroundTransparency = 1
+	Window.Categories = {}
+
+
+
+	local function CreateCategory(Name)
+
+
+		local Category = Instance.new("Frame")
+		Category.Name = Name
+		Category.Size = UDim2.new(1,0,1,0)
+		Category.BackgroundTransparency = 1
+		Category.Visible = false
+		Category.Parent = Window.Home
+
+
+
+		local Title = Instance.new("TextLabel")
+		Title.Name = "CategoryName"
+		Title.Size = UDim2.new(1,0,0,35)
+		Title.BackgroundTransparency = 1
+		Title.Text = Name
+		Title.TextColor3 = Color3.fromRGB(255,255,255)
+		Title.TextSize = 18
+		Title.Font = Enum.Font.GothamBold
+		Title.Parent = Category
+
+
+
+		local Scroll = Instance.new("ScrollingFrame")
+		Scroll.Name = "ScrollingFrame"
+		Scroll.Position = UDim2.new(0,10,0,40)
+		Scroll.Size = UDim2.new(1,-20,1,-50)
+		Scroll.BackgroundTransparency = 0.2
+		Scroll.BackgroundColor3 = Color3.fromRGB(15,15,20)
+
+		Scroll.ScrollBarThickness = 4
+		Scroll.CanvasSize = UDim2.new(0,0,0,0)
+
+		Scroll.Parent = Category
+
+
+
+		local Corner = Instance.new("UICorner")
+		Corner.CornerRadius = UDim.new(0,10)
+		Corner.Parent = Scroll
+
+
+
+		Window.Categories[Name] = Category
+
+
+		return Category
+
+	end
+
+
+
+	-- Création des catégories
+
+	local Main = CreateCategory("Main")
+
+	local Settings = CreateCategory("Settings")
+
+
+
+	-- Au démarrage on ouvre Main
+
 	Main.Visible = true
-	Main.Parent = Window.Home
-
-
-
-	local Title = Instance.new("TextLabel")
-	Title.Name = "CategoryName"
-	Title.Size = UDim2.new(1,0,0,35)
-	Title.BackgroundTransparency = 1
-	Title.Text = "Main"
-	Title.TextColor3 = Color3.fromRGB(255,255,255)
-	Title.TextSize = 18
-	Title.Font = Enum.Font.GothamBold
-	Title.Parent = Main
-
-
-
-	local Scroll = Instance.new("ScrollingFrame")
-	Scroll.Name = "ScrollingFrame"
-	Scroll.Position = UDim2.new(0,10,0,40)
-	Scroll.Size = UDim2.new(1,-20,1,-50)
-	Scroll.BackgroundTransparency = 0.2
-	Scroll.BackgroundColor3 = Color3.fromRGB(15,15,20)
-
-	Scroll.ScrollBarThickness = 4
-	Scroll.CanvasSize = UDim2.new(0,0,0,0)
-
-	Scroll.Parent = Main
-
-
-
-	local Corner = Instance.new("UICorner")
-	Corner.CornerRadius = UDim.new(0,10)
-	Corner.Parent = Scroll
-
-
-
-	-- Définit Main comme catégorie active
 
 	Window.CurrentCategory = Main
+
+	Window.SettingsCategory = Settings
+
 
 
 end
