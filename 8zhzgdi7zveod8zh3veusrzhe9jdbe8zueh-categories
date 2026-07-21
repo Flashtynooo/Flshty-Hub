@@ -1,17 +1,21 @@
 -- Flshty-Hub Categories
 -- Créé par Flashtynooo
+-- Utilisation autorisée.
+-- Modification et redistribution interdites.
 
--- Flshty-Hub Categories
--- Créé par Flashtynooo
 
 return function(Window)
 
+
 	print("Flshty Categories chargé")
+
+
 
 	local Main = Instance.new("Frame")
 	Main.Name = "Main"
 	Main.Size = UDim2.new(1,0,1,0)
 	Main.BackgroundTransparency = 1
+	Main.Visible = true
 	Main.Parent = Window.Home
 
 
@@ -34,10 +38,8 @@ return function(Window)
 	Scroll.Size = UDim2.new(1,-20,1,-50)
 	Scroll.BackgroundTransparency = 0.2
 	Scroll.BackgroundColor3 = Color3.fromRGB(15,15,20)
-
 	Scroll.ScrollBarThickness = 4
 	Scroll.CanvasSize = UDim2.new(0,0,0,0)
-
 	Scroll.Parent = Main
 
 
@@ -46,6 +48,45 @@ return function(Window)
 	Corner.CornerRadius = UDim.new(0,10)
 	Corner.Parent = Scroll
 
+
+
+	-- Connexion avec le menu
+
+	Window.CurrentCategory = Main
+
+
+
+	-- Quand paramètres s'ouvre, on cache Main
+
+	local SettingsButton = Window.SettingsButton
+	local SettingsPage = Window.SettingsPage
+
+
+	if SettingsButton and SettingsPage then
+
+
+		SettingsButton.MouseButton1Click:Connect(function()
+
+
+			if SettingsPage.Visible then
+
+				SettingsPage.Visible = false
+				Main.Visible = true
+
+
+			else
+
+				Main.Visible = false
+				SettingsPage.Visible = true
+
+
+			end
+
+
+		end)
+
+
+	end
 
 
 end
