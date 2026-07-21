@@ -1,7 +1,5 @@
 -- Flshty-Hub
 -- Créé par Flashtynooo
--- Utilisation autorisée.
--- Modification et redistribution interdites.
 
 local Flshty = {}
 Flshty.__index = Flshty
@@ -27,32 +25,56 @@ function Flshty:CreateWindow(options)
     ScreenGui.Parent = CoreGui
 
 
-    -- Fenêtre
+
+    -- Fenêtre principale
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "Window"
-    MainFrame.Size = UDim2.new(0,600,0,400)
-    MainFrame.Position = UDim2.new(0.5,-300,0.5,-200)
-    MainFrame.BackgroundColor3 = Color3.fromRGB(25,25,25)
+    MainFrame.Size = UDim2.new(0,450,0,300)
+    MainFrame.Position = UDim2.new(0.5,-225,0.5,-150)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(20,20,25)
+    MainFrame.BackgroundTransparency = 0.2
     MainFrame.Parent = ScreenGui
+
+
+    -- Arrondi fenêtre
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0,12)
+    Corner.Parent = MainFrame
+
+
+    -- Contour
+    local Stroke = Instance.new("UIStroke")
+    Stroke.Thickness = 2
+    Stroke.Transparency = 0.3
+    Stroke.Parent = MainFrame
+
 
 
     -- Barre du haut
     local TopBar = Instance.new("Frame")
     TopBar.Name = "TopBar"
     TopBar.Size = UDim2.new(1,0,0,40)
-    TopBar.BackgroundColor3 = Color3.fromRGB(35,35,35)
+    TopBar.BackgroundColor3 = Color3.fromRGB(30,30,35)
+    TopBar.BackgroundTransparency = 0.2
     TopBar.Parent = MainFrame
+
+
+    local TopCorner = Instance.new("UICorner")
+    TopCorner.CornerRadius = UDim.new(0,12)
+    TopCorner.Parent = TopBar
+
 
 
     -- Titre
     local Title = Instance.new("TextLabel")
     Title.Name = "Title"
     Title.Size = UDim2.new(1,-100,1,0)
-    Title.Position = UDim2.new(0,10,0,0)
+    Title.Position = UDim2.new(0,15,0,0)
     Title.BackgroundTransparency = 1
     Title.Text = options.Name or "Flshty"
-    Title.TextColor3 = Color3.new(1,1,1)
-    Title.TextSize = 20
+    Title.TextColor3 = Color3.fromRGB(255,255,255)
+    Title.TextSize = 18
+    Title.Font = Enum.Font.GothamBold
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = TopBar
 
@@ -63,22 +85,22 @@ function Flshty:CreateWindow(options)
     Minimize.Name = "Minimize"
     Minimize.Size = UDim2.new(0,40,0,40)
     Minimize.Position = UDim2.new(1,-80,0,0)
+    Minimize.BackgroundTransparency = 1
     Minimize.Text = "─"
     Minimize.TextSize = 25
-    Minimize.BackgroundTransparency = 1
     Minimize.TextColor3 = Color3.new(1,1,1)
     Minimize.Parent = TopBar
 
 
 
-    -- Bouton paramètres
+    -- Bouton settings
     local Settings = Instance.new("TextButton")
     Settings.Name = "Settings"
     Settings.Size = UDim2.new(0,40,0,40)
     Settings.Position = UDim2.new(1,-40,0,0)
+    Settings.BackgroundTransparency = 1
     Settings.Text = "⚙️"
     Settings.TextSize = 20
-    Settings.BackgroundTransparency = 1
     Settings.TextColor3 = Color3.new(1,1,1)
     Settings.Parent = TopBar
 
@@ -94,7 +116,42 @@ function Flshty:CreateWindow(options)
 
 
 
-    -- Drag
+    -- Bouton flottant
+    local Floating = Instance.new("TextButton")
+    Floating.Name = "FlshtyButton"
+    Floating.Size = UDim2.new(0,80,0,40)
+    Floating.Position = UDim2.new(0,20,0.5,0)
+    Floating.BackgroundColor3 = Color3.fromRGB(20,20,25)
+    Floating.Text = "Flshty"
+    Floating.TextColor3 = Color3.new(1,1,1)
+    Floating.Visible = false
+    Floating.Parent = ScreenGui
+
+
+    local FloatCorner = Instance.new("UICorner")
+    FloatCorner.CornerRadius = UDim.new(0,10)
+    FloatCorner.Parent = Floating
+
+
+
+    Minimize.MouseButton1Click:Connect(function()
+
+        MainFrame.Visible = false
+        Floating.Visible = true
+
+    end)
+
+
+    Floating.MouseButton1Click:Connect(function()
+
+        MainFrame.Visible = true
+        Floating.Visible = false
+
+    end)
+
+
+
+    -- Drag fenêtre
     local dragging = false
     local dragStart
     local startPos
@@ -109,6 +166,7 @@ function Flshty:CreateWindow(options)
             startPos = MainFrame.Position
 
         end
+
     end)
 
 
@@ -135,15 +193,6 @@ function Flshty:CreateWindow(options)
             )
 
         end
-
-    end)
-
-
-
-    -- Réduction
-    Minimize.MouseButton1Click:Connect(function()
-
-        MainFrame.Visible = false
 
     end)
 
