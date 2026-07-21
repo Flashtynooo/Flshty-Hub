@@ -1,0 +1,77 @@
+-- Flshty-Hub
+-- Créé par Flashtynooo
+-- Utilisation autorisée.
+-- Modification et redistribution interdites.
+
+local Flshty = {}
+Flshty.__index = Flshty
+
+
+function Flshty:CreateWindow(options)
+
+    options = options or {}
+
+    local Window = {}
+    Window.__index = Window
+
+    setmetatable(Window, Flshty)
+
+
+    local PlayerGui = game:GetService("CoreGui")
+
+
+    -- ScreenGui
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "Flshty"
+    ScreenGui.Parent = PlayerGui
+
+
+    -- Fenêtre principale
+    local MainFrame = Instance.new("Frame")
+    MainFrame.Name = "Window"
+    MainFrame.Size = UDim2.new(0, 600, 0, 400)
+    MainFrame.Position = UDim2.new(0.5, -300, 0.5, -200)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    MainFrame.Parent = ScreenGui
+
+
+    -- Barre du haut
+    local TopBar = Instance.new("Frame")
+    TopBar.Name = "TopBar"
+    TopBar.Size = UDim2.new(1, 0, 0, 40)
+    TopBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    TopBar.Parent = MainFrame
+
+
+    -- Titre
+    local Title = Instance.new("TextLabel")
+    Title.Name = "Title"
+    Title.Size = UDim2.new(1, -20, 1, 0)
+    Title.Position = UDim2.new(0, 10, 0, 0)
+    Title.BackgroundTransparency = 1
+    Title.Text = options.Name or "Flshty"
+    Title.TextColor3 = Color3.fromRGB(255,255,255)
+    Title.TextSize = 20
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.Parent = TopBar
+
+
+    -- Zone Home
+    local Home = Instance.new("Frame")
+    Home.Name = "Home"
+    Home.Size = UDim2.new(1,0,1,-40)
+    Home.Position = UDim2.new(0,0,0,40)
+    Home.BackgroundTransparency = 1
+    Home.Parent = MainFrame
+
+
+    Window.Gui = ScreenGui
+    Window.Frame = MainFrame
+    Window.Home = Home
+
+
+    return Window
+end
+
+
+return Flshty
