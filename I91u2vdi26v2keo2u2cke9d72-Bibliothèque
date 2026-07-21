@@ -28,7 +28,9 @@ function Flshty:CreateWindow(options)
 
 	options = options or {}
 
+
 	local Window = {}
+
 	Window.__index = Window
 
 	setmetatable(Window,Flshty)
@@ -59,7 +61,6 @@ function Flshty:CreateWindow(options)
 	Corner.Parent = MainFrame
 
 
-
 	local Stroke = Instance.new("UIStroke")
 	Stroke.Thickness = 3
 	Stroke.Color = Flshty.Theme.Pink
@@ -68,6 +69,7 @@ function Flshty:CreateWindow(options)
 
 
 	local TopBar = Instance.new("Frame")
+	TopBar.Name = "TopBar"
 	TopBar.Size = UDim2.new(1,0,0,40)
 	TopBar.BackgroundColor3 = Flshty.Theme.TopBar
 	TopBar.Parent = MainFrame
@@ -102,7 +104,7 @@ function Flshty:CreateWindow(options)
 	Settings.Position = UDim2.new(1,-40,0,0)
 	Settings.BackgroundTransparency = 1
 	Settings.Text = "⚙️"
-	Settings.TextSize = 26
+	Settings.TextSize = 28
 	Settings.TextColor3 = Flshty.Theme.Text
 	Settings.Parent = TopBar
 
@@ -117,7 +119,7 @@ function Flshty:CreateWindow(options)
 
 
 
-	-- PARAMETRES DANS HOME
+	-- PARAMETRES DIRECTEMENT DANS HOME
 
 	local SettingsPage = Instance.new("Frame")
 	SettingsPage.Name = "Settings"
@@ -151,9 +153,30 @@ function Flshty:CreateWindow(options)
 
 
 
+	-- Bouton paramètres
+
 	Settings.MouseButton1Click:Connect(function()
 
-		SettingsPage.Visible = not SettingsPage.Visible
+
+		if SettingsPage.Visible then
+
+			SettingsPage.Visible = false
+
+			if Window.CurrentCategory then
+				Window.CurrentCategory.Visible = true
+			end
+
+
+		else
+
+			if Window.CurrentCategory then
+				Window.CurrentCategory.Visible = false
+			end
+
+			SettingsPage.Visible = true
+
+		end
+
 
 	end)
 
@@ -183,10 +206,11 @@ function Flshty:CreateWindow(options)
 	Window.SettingsButton = Settings
 	Window.SettingsPage = SettingsPage
 	Window.FloatingButton = Floating
+	Window.CurrentCategory = nil
 
 
 
-	-- CHARGEMENT CATEGORIES
+	-- Chargement catégories
 
 	local CategoriesLoader = loadstring(game:HttpGet(CategoriesURL))
 
@@ -199,7 +223,6 @@ function Flshty:CreateWindow(options)
 	return Window
 
 end
-
 
 
 return Flshty
