@@ -1,1 +1,61 @@
+-- Flshty-Hub Settings
+-- Créé par Flashtynooo
+-- Utilisation autorisée.
+-- Modification et redistribution interdites.
 
+
+return function(Window)
+
+
+	local Home = Window.Home
+
+
+	local SettingsPage = Instance.new("Frame")
+	SettingsPage.Name = "Settings"
+	SettingsPage.Size = UDim2.new(1,0,1,0)
+	SettingsPage.BackgroundTransparency = 1
+	SettingsPage.Visible = false
+	SettingsPage.Parent = Home
+
+
+
+	local Title = Instance.new("TextLabel")
+	Title.Size = UDim2.new(1,0,0,40)
+	Title.BackgroundTransparency = 1
+	Title.Text = "Paramètres"
+	Title.TextColor3 = Color3.fromRGB(255,255,255)
+	Title.TextSize = 20
+	Title.Font = Enum.Font.GothamBold
+	Title.Parent = SettingsPage
+
+
+
+	local Info = Instance.new("TextLabel")
+	Info.Position = UDim2.new(0,20,0,50)
+	Info.Size = UDim2.new(1,-40,0,40)
+	Info.BackgroundTransparency = 1
+	Info.Text = "Flshty Settings"
+	Info.TextColor3 = Color3.fromRGB(200,200,200)
+	Info.TextSize = 16
+	Info.Parent = SettingsPage
+
+
+
+	-- Connexion au bouton ⚙️
+
+	local SettingsButton = Window.SettingsButton
+
+
+	if SettingsButton then
+
+		SettingsButton.MouseButton1Click:Connect(function()
+
+			SettingsPage.Visible = not SettingsPage.Visible
+
+		end)
+
+	end
+
+
+
+end
