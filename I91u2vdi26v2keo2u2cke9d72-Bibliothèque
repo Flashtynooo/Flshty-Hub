@@ -96,7 +96,7 @@ function Flshty:CreateWindow(options)
 
 
 	local Settings = Instance.new("TextButton")
-	Settings.Size = UDim2.new(0,40,0,40)
+	Settings.Size = UDim2.new(0,50,0,50)
 	Settings.Position = UDim2.new(1,-40,0,0)
 	Settings.BackgroundTransparency = 1
 	Settings.Text = "⚙️"
