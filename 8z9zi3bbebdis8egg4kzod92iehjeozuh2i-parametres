@@ -10,7 +10,6 @@ return function(Window)
 	local Home = Window.Home
 
 
-
 	local SettingsPage = Instance.new("Frame")
 	SettingsPage.Name = "Settings"
 	SettingsPage.Size = UDim2.new(1,0,1,0)
@@ -39,7 +38,7 @@ return function(Window)
 	Scroll.BackgroundColor3 = Color3.fromRGB(15,15,20)
 	Scroll.BackgroundTransparency = 0.2
 	Scroll.ScrollBarThickness = 4
-	Scroll.CanvasSize = UDim2.new(0,0,0,0)
+	Scroll.CanvasSize = UDim2.new(0,0,0,100)
 	Scroll.Parent = SettingsPage
 
 
@@ -50,15 +49,17 @@ return function(Window)
 
 
 
-	local Info = Instance.new("TextLabel")
-	Info.Size = UDim2.new(1,0,0,40)
-	Info.BackgroundTransparency = 1
-	Info.Text = "Flshty Settings"
-	Info.TextColor3 = Color3.fromRGB(200,200,200)
-	Info.TextSize = 16
-	Info.Parent = Scroll
+	local Text = Instance.new("TextLabel")
+	Text.Size = UDim2.new(1,0,0,40)
+	Text.BackgroundTransparency = 1
+	Text.Text = "Flshty Settings"
+	Text.TextColor3 = Color3.fromRGB(220,220,220)
+	Text.TextSize = 16
+	Text.Parent = Scroll
 
 
+
+	-- Référence bouton paramètres
 
 	local SettingsButton = Window.SettingsButton
 
@@ -70,26 +71,31 @@ return function(Window)
 		SettingsButton.MouseButton1Click:Connect(function()
 
 
+			if SettingsPage.Visible then
 
-			if Window.CurrentPage == SettingsPage then
+				-- Fermer paramètres
+
+				SettingsPage.Visible = false
 
 
-				if Window.LastPage then
-
-					Window:ShowPage(Window.LastPage)
-
+				if Window.CurrentCategory then
+					Window.CurrentCategory.Visible = true
 				end
-
 
 
 			else
 
+				-- Ouvrir paramètres
 
-				Window:ShowPage(SettingsPage)
+				if Window.CurrentCategory then
+					Window.CurrentCategory.Visible = false
+				end
+
+
+				SettingsPage.Visible = true
 
 
 			end
-
 
 
 		end)
