@@ -10,6 +10,7 @@ return function(Window)
 	local Home = Window.Home
 
 
+
 	local SettingsPage = Instance.new("Frame")
 	SettingsPage.Name = "Settings"
 	SettingsPage.Size = UDim2.new(1,0,1,0)
@@ -20,7 +21,8 @@ return function(Window)
 
 
 	local Title = Instance.new("TextLabel")
-	Title.Size = UDim2.new(1,0,0,40)
+	Title.Name = "SettingsTitle"
+	Title.Size = UDim2.new(1,0,0,35)
 	Title.BackgroundTransparency = 1
 	Title.Text = "Paramètres"
 	Title.TextColor3 = Color3.fromRGB(255,255,255)
@@ -30,29 +32,68 @@ return function(Window)
 
 
 
+	local Scroll = Instance.new("ScrollingFrame")
+	Scroll.Name = "SettingsScroll"
+	Scroll.Position = UDim2.new(0,10,0,45)
+	Scroll.Size = UDim2.new(1,-20,1,-55)
+	Scroll.BackgroundColor3 = Color3.fromRGB(15,15,20)
+	Scroll.BackgroundTransparency = 0.2
+	Scroll.ScrollBarThickness = 4
+	Scroll.CanvasSize = UDim2.new(0,0,0,0)
+	Scroll.Parent = SettingsPage
+
+
+
+	local Corner = Instance.new("UICorner")
+	Corner.CornerRadius = UDim.new(0,10)
+	Corner.Parent = Scroll
+
+
+
 	local Info = Instance.new("TextLabel")
-	Info.Position = UDim2.new(0,20,0,50)
-	Info.Size = UDim2.new(1,-40,0,40)
+	Info.Size = UDim2.new(1,0,0,40)
 	Info.BackgroundTransparency = 1
 	Info.Text = "Flshty Settings"
 	Info.TextColor3 = Color3.fromRGB(200,200,200)
 	Info.TextSize = 16
-	Info.Parent = SettingsPage
+	Info.Parent = Scroll
 
 
-
-	-- Connexion au bouton ⚙️
 
 	local SettingsButton = Window.SettingsButton
 
 
+
 	if SettingsButton then
+
 
 		SettingsButton.MouseButton1Click:Connect(function()
 
-			SettingsPage.Visible = not SettingsPage.Visible
+
+
+			if Window.CurrentPage == SettingsPage then
+
+
+				if Window.LastPage then
+
+					Window:ShowPage(Window.LastPage)
+
+				end
+
+
+
+			else
+
+
+				Window:ShowPage(SettingsPage)
+
+
+			end
+
+
 
 		end)
+
 
 	end
 
