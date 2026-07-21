@@ -25,12 +25,10 @@ local CategoriesURL = "https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/
 
 function Flshty:CreateWindow(options)
 
-
 	options = options or {}
 
 
 	local Window = {}
-
 	Window.__index = Window
 
 	setmetatable(Window,Flshty)
@@ -54,6 +52,7 @@ function Flshty:CreateWindow(options)
 	MainFrame.BackgroundColor3 = Flshty.Theme.Background
 	MainFrame.BackgroundTransparency = 0.2
 	MainFrame.Parent = ScreenGui
+
 
 
 	local Corner = Instance.new("UICorner")
@@ -119,28 +118,6 @@ function Flshty:CreateWindow(options)
 
 
 
-	-- PARAMETRES DIRECTEMENT DANS HOME
-
-	local SettingsPage = Instance.new("Frame")
-	SettingsPage.Name = "Settings"
-	SettingsPage.Size = UDim2.new(1,0,1,0)
-	SettingsPage.BackgroundTransparency = 1
-	SettingsPage.Visible = false
-	SettingsPage.Parent = Home
-
-
-
-	local SettingsTitle = Instance.new("TextLabel")
-	SettingsTitle.Size = UDim2.new(1,0,0,40)
-	SettingsTitle.BackgroundTransparency = 1
-	SettingsTitle.Text = "Paramètres"
-	SettingsTitle.TextColor3 = Flshty.Theme.Text
-	SettingsTitle.TextSize = 20
-	SettingsTitle.Font = Enum.Font.GothamBold
-	SettingsTitle.Parent = SettingsPage
-
-
-
 	local Floating = Instance.new("TextButton")
 	Floating.Name = "FlshtyButton"
 	Floating.Size = UDim2.new(0,80,0,40)
@@ -153,32 +130,69 @@ function Flshty:CreateWindow(options)
 
 
 
-	-- Bouton paramètres
+	local FloatCorner = Instance.new("UICorner")
+	FloatCorner.CornerRadius = UDim.new(0,12)
+	FloatCorner.Parent = Floating
 
-	Settings.MouseButton1Click:Connect(function()
 
 
-		if SettingsPage.Visible then
+	local function Drag(object,target)
 
-			SettingsPage.Visible = false
+		local dragging = false
+		local dragStart
+		local startPosition
 
-			if Window.CurrentCategory then
-				Window.CurrentCategory.Visible = true
+
+		object.InputBegan:Connect(function(input)
+
+			if input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch then
+
+				dragging = true
+				dragStart = input.Position
+				startPosition = target.Position
+
+
+				input.Changed:Connect(function()
+
+					if input.UserInputState == Enum.UserInputState.End then
+						dragging = false
+					end
+
+				end)
+
 			end
 
+		end)
 
-		else
 
-			if Window.CurrentCategory then
-				Window.CurrentCategory.Visible = false
+
+		object.InputChanged:Connect(function(input)
+
+			if dragging and
+			(input.UserInputType == Enum.UserInputType.MouseMovement
+			or input.UserInputType == Enum.UserInputType.Touch) then
+
+				local delta = input.Position - dragStart
+
+
+				target.Position = UDim2.new(
+					startPosition.X.Scale,
+					startPosition.X.Offset + delta.X,
+					startPosition.Y.Scale,
+					startPosition.Y.Offset + delta.Y
+				)
+
 			end
 
-			SettingsPage.Visible = true
+		end)
 
-		end
+	end
 
 
-	end)
+
+	Drag(TopBar,MainFrame)
+	Drag(Floating,Floating)
 
 
 
@@ -204,18 +218,18 @@ function Flshty:CreateWindow(options)
 	Window.Frame = MainFrame
 	Window.Home = Home
 	Window.SettingsButton = Settings
-	Window.SettingsPage = SettingsPage
 	Window.FloatingButton = Floating
 	Window.CurrentCategory = nil
+	Window.SettingsPage = nil
 
 
 
-	-- Chargement catégories
+	-- Chargement des catégories
 
 	local CategoriesLoader = loadstring(game:HttpGet(CategoriesURL))
 
 	if CategoriesLoader then
-		CategoriesLoader()(Window)
+		CategoriesLoader(Window)
 	end
 
 
