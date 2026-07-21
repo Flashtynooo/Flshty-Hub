@@ -224,9 +224,25 @@ local SettingsURL = "https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/re
 
 local CategoriesURL = "https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/8zhzgdi7zveod8zh3veusrzhe9jdbe8zueh-categories"
 
-	return Window
+-- Chargement paramètres
 
+local SettingsLoader = loadstring(game:HttpGet(SettingsURL))
+
+if SettingsLoader then
+	SettingsLoader(Window)
 end
+
+
+
+-- Chargement catégories
+
+local CategoriesLoader = loadstring(game:HttpGet(CategoriesURL))
+
+if CategoriesLoader then
+	CategoriesLoader(Window)
+end
+	return end
+nd
 
 
 return Flshty
