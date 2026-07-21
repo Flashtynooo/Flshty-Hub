@@ -17,8 +17,6 @@ Flshty.Theme = {
 }
 
 
--- Extensions
-
 local SettingsURL = "https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/8z9zi3bbebdis8egg4kzod92iehjeozuh2i-parametres"
 
 local CategoriesURL = "https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/8zhzgdi7zveod8zh3veusrzhe9jdbe8zueh-categories"
@@ -90,8 +88,6 @@ function Flshty:CreateWindow(options)
 
 
 
-	-- Réduire
-
 	local Minimize = Instance.new("TextButton")
 	Minimize.Size = UDim2.new(0,40,0,40)
 	Minimize.Position = UDim2.new(1,-80,0,0)
@@ -103,20 +99,16 @@ function Flshty:CreateWindow(options)
 
 
 
-	-- Paramètres
-
 	local Settings = Instance.new("TextButton")
 	Settings.Size = UDim2.new(0,40,0,40)
 	Settings.Position = UDim2.new(1,-40,0,0)
 	Settings.BackgroundTransparency = 1
 	Settings.Text = "⚙️"
-	Settings.TextSize = 25
+	Settings.TextSize = 28
 	Settings.TextColor3 = Flshty.Theme.Text
 	Settings.Parent = TopBar
 
 
-
-	-- Home
 
 	local Home = Instance.new("Frame")
 	Home.Name = "Home"
@@ -126,8 +118,6 @@ function Flshty:CreateWindow(options)
 	Home.Parent = MainFrame
 
 
-
-	-- Bouton flottant
 
 	local Floating = Instance.new("TextButton")
 	Floating.Name = "FlshtyButton"
@@ -140,20 +130,12 @@ function Flshty:CreateWindow(options)
 	Floating.Parent = ScreenGui
 
 
+
 	local FloatCorner = Instance.new("UICorner")
 	FloatCorner.CornerRadius = UDim.new(0,12)
 	FloatCorner.Parent = Floating
 
 
-
-	local FloatStroke = Instance.new("UIStroke")
-	FloatStroke.Color = Flshty.Theme.Purple
-	FloatStroke.Thickness = 2
-	FloatStroke.Parent = Floating
-
-
-
-	-- Drag
 
 	local function Drag(object,target)
 
@@ -183,7 +165,6 @@ function Flshty:CreateWindow(options)
 			end
 
 		end)
-
 
 
 		object.InputChanged:Connect(function(input)
@@ -230,35 +211,14 @@ function Flshty:CreateWindow(options)
 
 
 
-	-- Données Window
+	-- Variables accessibles aux extensions
 
 	Window.Gui = ScreenGui
 	Window.Frame = MainFrame
 	Window.Home = Home
 	Window.FloatingButton = Floating
 	Window.SettingsButton = Settings
-
-
-	-- Système de pages
-
-	Window.CurrentPage = nil
-	Window.LastPage = nil
-
-
-	function Window:ShowPage(Page)
-
-		if Window.CurrentPage then
-			Window.CurrentPage.Visible = false
-		end
-
-
-		Window.LastPage = Window.CurrentPage
-
-		Window.CurrentPage = Page
-
-		Page.Visible = true
-
-	end
+	Window.CurrentCategory = nil
 
 
 
