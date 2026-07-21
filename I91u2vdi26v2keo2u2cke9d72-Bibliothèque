@@ -218,6 +218,12 @@ function Flshty:CreateWindow(options)
 	Window.Home = Home
 	Window.FloatingButton = Floating
 
+-- Chargement des catégories
+local Categories = loadstring(game:HttpGet(
+"https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/8zhzgdi7zveod8zh3veusrzhe9jdbe8zueh-categories"
+))()
+
+Categories(Window)
 
 	return Window
 
