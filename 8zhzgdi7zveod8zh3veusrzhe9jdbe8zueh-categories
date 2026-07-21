@@ -37,8 +37,10 @@ return function(Window)
 	Scroll.Size = UDim2.new(1,-20,1,-50)
 	Scroll.BackgroundTransparency = 0.2
 	Scroll.BackgroundColor3 = Color3.fromRGB(15,15,20)
+
 	Scroll.ScrollBarThickness = 4
 	Scroll.CanvasSize = UDim2.new(0,0,0,0)
+
 	Scroll.Parent = Main
 
 
@@ -49,7 +51,7 @@ return function(Window)
 
 
 
-	-- Donne la catégorie active au Menu
+	-- Définit Main comme catégorie active
 
 	Window.CurrentCategory = Main
 
