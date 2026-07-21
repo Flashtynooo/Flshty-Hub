@@ -217,6 +217,7 @@ function Flshty:CreateWindow(options)
 	Window.Frame = MainFrame
 	Window.Home = Home
 	Window.FloatingButton = Floating
+    Window.SettingsButton = Settings
 
 -- Liens des extensions Flshty
 
