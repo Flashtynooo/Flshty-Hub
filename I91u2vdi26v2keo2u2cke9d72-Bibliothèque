@@ -3,11 +3,8 @@
 -- Utilisation autorisée.
 -- Modification et redistribution interdites.
 
-
 local Flshty = {}
-
 Flshty.__index = Flshty
-
 
 Flshty.Theme = {
 	Background = Color3.fromRGB(10,10,15),
@@ -17,33 +14,32 @@ Flshty.Theme = {
 	Text = Color3.fromRGB(255,255,255)
 }
 
+local CategoriesURL =
+"https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/8zhzgdi7zveod8zh3veusrzhe9jdbe8zueh-categories"
 
-
-local CategoriesURL = "https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/8zhzgdi7zveod8zh3veusrzhe9jdbe8zueh-categories"
-
-
+local SettingsURL =
+"TON_RAW_SETTINGS"
 
 function Flshty:CreateWindow(options)
 
 	options = options or {}
 
-
 	local Window = {}
-	Window.__index = Window
-
 	setmetatable(Window,Flshty)
-
-
 
 	local CoreGui = game:GetService("CoreGui")
 
-
+	-------------------------------------------------
+	-- GUI
+	-------------------------------------------------
 
 	local ScreenGui = Instance.new("ScreenGui")
 	ScreenGui.Name = "Flshty"
 	ScreenGui.Parent = CoreGui
 
-
+	-------------------------------------------------
+	-- FENETRE
+	-------------------------------------------------
 
 	local MainFrame = Instance.new("Frame")
 	MainFrame.Name = "Window"
@@ -53,28 +49,24 @@ function Flshty:CreateWindow(options)
 	MainFrame.BackgroundTransparency = 0.2
 	MainFrame.Parent = ScreenGui
 
-
-
 	local Corner = Instance.new("UICorner")
 	Corner.CornerRadius = UDim.new(0,14)
 	Corner.Parent = MainFrame
-
-
 
 	local Stroke = Instance.new("UIStroke")
 	Stroke.Thickness = 3
 	Stroke.Color = Flshty.Theme.Pink
 	Stroke.Parent = MainFrame
 
-
+	-------------------------------------------------
+	-- TOPBAR
+	-------------------------------------------------
 
 	local TopBar = Instance.new("Frame")
 	TopBar.Name = "TopBar"
 	TopBar.Size = UDim2.new(1,0,0,40)
 	TopBar.BackgroundColor3 = Flshty.Theme.TopBar
 	TopBar.Parent = MainFrame
-
-
 
 	local Title = Instance.new("TextLabel")
 	Title.Size = UDim2.new(1,-100,1,0)
@@ -86,7 +78,9 @@ function Flshty:CreateWindow(options)
 	Title.Font = Enum.Font.GothamBold
 	Title.Parent = TopBar
 
-
+	-------------------------------------------------
+	-- BOUTON -
+	-------------------------------------------------
 
 	local Minimize = Instance.new("TextButton")
 	Minimize.Size = UDim2.new(0,40,0,40)
@@ -97,30 +91,51 @@ function Flshty:CreateWindow(options)
 	Minimize.TextColor3 = Flshty.Theme.Text
 	Minimize.Parent = TopBar
 
+	-------------------------------------------------
+	-- BOUTON SETTINGS
+	-------------------------------------------------
 
+	local SettingsButton = Instance.new("TextButton")
+	SettingsButton.Size = UDim2.new(0,40,0,40)
+	SettingsButton.Position = UDim2.new(1,-40,0,0)
+	SettingsButton.BackgroundTransparency = 1
+	SettingsButton.Text = "⚙️"
+	SettingsButton.TextSize = 28
+	SettingsButton.TextColor3 = Flshty.Theme.Text
+	SettingsButton.Parent = TopBar
 
-	local Settings = Instance.new("TextButton")
-	Settings.Size = UDim2.new(0,40,0,40)
-	Settings.Position = UDim2.new(1,-40,0,0)
-	Settings.BackgroundTransparency = 1
-	Settings.Text = "⚙️"
-	Settings.TextSize = 28
-	Settings.TextColor3 = Flshty.Theme.Text
-	Settings.Parent = TopBar
+	-------------------------------------------------
+	-- BARRE CATEGORIES
+	-------------------------------------------------
 
+	local CategoryBar = Instance.new("Frame")
+	CategoryBar.Name = "CategoryBar"
+	CategoryBar.Size = UDim2.new(1,0,0,35)
+	CategoryBar.Position = UDim2.new(0,0,0,40)
+	CategoryBar.BackgroundTransparency = 1
+	CategoryBar.Parent = MainFrame
 
+	local Layout = Instance.new("UIListLayout")
+	Layout.FillDirection = Enum.FillDirection.Horizontal
+	Layout.Padding = UDim.new(0,5)
+	Layout.Parent = CategoryBar
+
+	-------------------------------------------------
+	-- HOME
+	-------------------------------------------------
 
 	local Home = Instance.new("Frame")
 	Home.Name = "Home"
-	Home.Size = UDim2.new(1,0,1,-40)
-	Home.Position = UDim2.new(0,0,0,40)
+	Home.Size = UDim2.new(1,0,1,-75)
+	Home.Position = UDim2.new(0,0,0,75)
 	Home.BackgroundTransparency = 1
 	Home.Parent = MainFrame
 
-
+	-------------------------------------------------
+	-- BOUTON FLOTTANT
+	-------------------------------------------------
 
 	local Floating = Instance.new("TextButton")
-	Floating.Name = "FlshtyButton"
 	Floating.Size = UDim2.new(0,80,0,40)
 	Floating.Position = UDim2.new(0,20,0.5,0)
 	Floating.BackgroundColor3 = Flshty.Theme.Background
@@ -129,13 +144,28 @@ function Flshty:CreateWindow(options)
 	Floating.Visible = false
 	Floating.Parent = ScreenGui
 
+	-------------------------------------------------
+	-- VARIABLES PARTAGEES
+	-------------------------------------------------
 
+	Window.Gui = ScreenGui
+	Window.Frame = MainFrame
+	Window.Home = Home
+	Window.CategoryBar = CategoryBar
 
-	local FloatCorner = Instance.new("UICorner")
-	FloatCorner.CornerRadius = UDim.new(0,12)
-	FloatCorner.Parent = Floating
+	Window.SettingsButton = SettingsButton
+	Window.FloatingButton = Floating
 
+	Window.CurrentCategory = nil
+	Window.LastCategory = nil
+	Window.SettingsPage = nil
+	Window.SettingsOpened = false
 
+	Window.CategoryButtons = {}
+
+	-------------------------------------------------
+	-- MINIMIZE
+	-------------------------------------------------
 
 	Minimize.MouseButton1Click:Connect(function()
 
@@ -144,8 +174,6 @@ function Flshty:CreateWindow(options)
 
 	end)
 
-
-
 	Floating.MouseButton1Click:Connect(function()
 
 		MainFrame.Visible = true
@@ -153,19 +181,9 @@ function Flshty:CreateWindow(options)
 
 	end)
 
-
-
-	Window.Gui = ScreenGui
-	Window.Frame = MainFrame
-	Window.Home = Home
-	Window.SettingsButton = Settings
-	Window.FloatingButton = Floating
-
-	Window.CurrentCategory = nil
-	Window.LastCategory = nil
-	Window.SettingsCategory = nil
-
-
+	-------------------------------------------------
+	-- LOAD
+	-------------------------------------------------
 
 	local CategoriesLoader = loadstring(game:HttpGet(CategoriesURL))
 
@@ -173,11 +191,14 @@ function Flshty:CreateWindow(options)
 		CategoriesLoader(Window)
 	end
 
+	local SettingsLoader = loadstring(game:HttpGet(SettingsURL))
 
+	if SettingsLoader then
+		SettingsLoader(Window)
+	end
 
 	return Window
 
 end
-
 
 return Flshty
