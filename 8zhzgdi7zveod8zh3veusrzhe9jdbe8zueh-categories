@@ -3,86 +3,91 @@
 -- Utilisation autorisée.
 -- Modification et redistribution interdites.
 
-
 return function(Window)
 
+	-------------------------------------------------
+	-- MAIN
+	-------------------------------------------------
 
-	print("Flshty Categories chargé")
-
-
-	Window.Categories = {}
-
-
-
-	local function CreateCategory(Name)
-
-
-		local Category = Instance.new("Frame")
-		Category.Name = Name
-		Category.Size = UDim2.new(1,0,1,0)
-		Category.BackgroundTransparency = 1
-		Category.Visible = false
-		Category.Parent = Window.Home
-
-
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "CategoryName"
-		Title.Size = UDim2.new(1,0,0,35)
-		Title.BackgroundTransparency = 1
-		Title.Text = Name
-		Title.TextColor3 = Color3.fromRGB(255,255,255)
-		Title.TextSize = 18
-		Title.Font = Enum.Font.GothamBold
-		Title.Parent = Category
-
-
-
-		local Scroll = Instance.new("ScrollingFrame")
-		Scroll.Name = "ScrollingFrame"
-		Scroll.Position = UDim2.new(0,10,0,40)
-		Scroll.Size = UDim2.new(1,-20,1,-50)
-		Scroll.BackgroundTransparency = 0.2
-		Scroll.BackgroundColor3 = Color3.fromRGB(15,15,20)
-
-		Scroll.ScrollBarThickness = 4
-		Scroll.CanvasSize = UDim2.new(0,0,0,0)
-
-		Scroll.Parent = Category
-
-
-
-		local Corner = Instance.new("UICorner")
-		Corner.CornerRadius = UDim.new(0,10)
-		Corner.Parent = Scroll
-
-
-
-		Window.Categories[Name] = Category
-
-
-		return Category
-
-	end
-
-
-
-	-- Création des catégories
-
-	local Main = CreateCategory("Main")
-
-	local Settings = CreateCategory("Settings")
-
-
-
-	-- Au démarrage on ouvre Main
-
+	local Main = Instance.new("Frame")
+	Main.Name = "Main"
+	Main.Size = UDim2.new(1,0,1,0)
+	Main.BackgroundTransparency = 1
 	Main.Visible = true
+	Main.Parent = Window.Home
 
 	Window.CurrentCategory = Main
+	Window.LastCategory = Main
 
-	Window.SettingsCategory = Settings
+	-------------------------------------------------
+	-- TITRE
+	-------------------------------------------------
 
+	local Title = Instance.new("TextLabel")
+	Title.Size = UDim2.new(1,0,0,35)
+	Title.BackgroundTransparency = 1
+	Title.Text = "Main"
+	Title.TextColor3 = Color3.fromRGB(255,255,255)
+	Title.TextSize = 18
+	Title.Font = Enum.Font.GothamBold
+	Title.Parent = Main
 
+	-------------------------------------------------
+	-- SCROLLING FRAME
+	-------------------------------------------------
+
+	local Scroll = Instance.new("ScrollingFrame")
+	Scroll.Name = "ScrollingFrame"
+	Scroll.Position = UDim2.new(0,10,0,40)
+	Scroll.Size = UDim2.new(1,-20,1,-50)
+	Scroll.BackgroundTransparency = 0.2
+	Scroll.BackgroundColor3 = Color3.fromRGB(15,15,20)
+	Scroll.ScrollBarThickness = 4
+	Scroll.CanvasSize = UDim2.new(0,0,0,0)
+	Scroll.Parent = Main
+
+	local Corner = Instance.new("UICorner")
+	Corner.CornerRadius = UDim.new(0,10)
+	Corner.Parent = Scroll
+
+	-------------------------------------------------
+	-- BOUTON DE CATEGORIE
+	-------------------------------------------------
+
+	local Button = Instance.new("TextButton")
+	Button.Name = "MainButton"
+	Button.Size = UDim2.new(0,90,1,0)
+	Button.BackgroundTransparency = 0.2
+	Button.BackgroundColor3 = Color3.fromRGB(25,25,35)
+	Button.Text = "Main"
+	Button.TextColor3 = Color3.fromRGB(255,255,255)
+	Button.Parent = Window.CategoryBar
+
+	local ButtonCorner = Instance.new("UICorner")
+	ButtonCorner.CornerRadius = UDim.new(0,8)
+	ButtonCorner.Parent = Button
+
+	table.insert(Window.CategoryButtons, Button)
+
+	-------------------------------------------------
+	-- CHANGEMENT DE CATEGORIE
+	-------------------------------------------------
+
+	Button.MouseButton1Click:Connect(function()
+
+		if Window.SettingsOpened then
+			return
+		end
+
+		if Window.CurrentCategory then
+			Window.CurrentCategory.Visible = false
+		end
+
+		Main.Visible = true
+
+		Window.CurrentCategory = Main
+		Window.LastCategory = Main
+
+	end)
 
 end
