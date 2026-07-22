@@ -3,106 +3,115 @@
 -- Utilisation autorisée.
 -- Modification et redistribution interdites.
 
-
 return function(Window)
 
+	-------------------------------------------------
+	-- PAGE
+	-------------------------------------------------
 
-	local Home = Window.Home
+	local Page = Instance.new("Frame")
+	Page.Name = "Settings"
+	Page.Size = UDim2.new(1,0,1,0)
+	Page.BackgroundTransparency = 1
+	Page.Visible = false
+	Page.Parent = Window.Home
 
+	Window.SettingsPage = Page
 
-	local SettingsPage = Instance.new("Frame")
-	SettingsPage.Name = "Settings"
-	SettingsPage.Size = UDim2.new(1,0,1,0)
-	SettingsPage.BackgroundTransparency = 1
-	SettingsPage.Visible = false
-	SettingsPage.Parent = Home
-
-
+	-------------------------------------------------
+	-- TITRE
+	-------------------------------------------------
 
 	local Title = Instance.new("TextLabel")
-	Title.Name = "SettingsTitle"
 	Title.Size = UDim2.new(1,0,0,35)
 	Title.BackgroundTransparency = 1
-	Title.Text = "Paramètres"
+	Title.Text = "Settings"
 	Title.TextColor3 = Color3.fromRGB(255,255,255)
-	Title.TextSize = 20
+	Title.TextSize = 18
 	Title.Font = Enum.Font.GothamBold
-	Title.Parent = SettingsPage
+	Title.Parent = Page
 
-
+	-------------------------------------------------
+	-- SCROLLING FRAME
+	-------------------------------------------------
 
 	local Scroll = Instance.new("ScrollingFrame")
-	Scroll.Name = "SettingsScroll"
-	Scroll.Position = UDim2.new(0,10,0,45)
-	Scroll.Size = UDim2.new(1,-20,1,-55)
-	Scroll.BackgroundColor3 = Color3.fromRGB(15,15,20)
+	Scroll.Position = UDim2.new(0,10,0,40)
+	Scroll.Size = UDim2.new(1,-20,1,-50)
 	Scroll.BackgroundTransparency = 0.2
+	Scroll.BackgroundColor3 = Color3.fromRGB(15,15,20)
 	Scroll.ScrollBarThickness = 4
-	Scroll.CanvasSize = UDim2.new(0,0,0,100)
-	Scroll.Parent = SettingsPage
-
-
+	Scroll.CanvasSize = UDim2.new(0,0,0,300)
+	Scroll.Parent = Page
 
 	local Corner = Instance.new("UICorner")
 	Corner.CornerRadius = UDim.new(0,10)
 	Corner.Parent = Scroll
 
+	-------------------------------------------------
+	-- LANGUE
+	-------------------------------------------------
 
+	local Language = Instance.new("TextButton")
+	Language.Size = UDim2.new(1,-20,0,35)
+	Language.Position = UDim2.new(0,10,0,10)
+	Language.Text = "Language : English"
+	Language.Parent = Scroll
 
-	local Text = Instance.new("TextLabel")
-	Text.Size = UDim2.new(1,0,0,40)
-	Text.BackgroundTransparency = 1
-	Text.Text = "Flshty Settings"
-	Text.TextColor3 = Color3.fromRGB(220,220,220)
-	Text.TextSize = 16
-	Text.Parent = Scroll
+	-------------------------------------------------
+	-- VISIBILITE
+	-------------------------------------------------
 
+	local Visibility = Instance.new("TextButton")
+	Visibility.Size = UDim2.new(1,-20,0,35)
+	Visibility.Position = UDim2.new(0,10,0,55)
+	Visibility.Text = "Transparency : 0.2"
+	Visibility.Parent = Scroll
 
+	-------------------------------------------------
+	-- OUVERTURE / FERMETURE
+	-------------------------------------------------
 
-	-- Référence bouton paramètres
+	Window.SettingsButton.MouseButton1Click:Connect(function()
 
-	local SettingsButton = Window.SettingsButton
+		Window.SettingsOpened = not Window.SettingsOpened
 
+		if Window.SettingsOpened then
 
-
-	if SettingsButton then
-
-
-		SettingsButton.MouseButton1Click:Connect(function()
-
-
-			if SettingsPage.Visible then
-
-				-- Fermer paramètres
-
-				SettingsPage.Visible = false
-
-
-				if Window.CurrentCategory then
-					Window.CurrentCategory.Visible = true
-				end
-
-
-			else
-
-				-- Ouvrir paramètres
-
-				if Window.CurrentCategory then
-					Window.CurrentCategory.Visible = false
-				end
-
-
-				SettingsPage.Visible = true
-
-
+			if Window.CurrentCategory then
+				Window.LastCategory = Window.CurrentCategory
+				Window.CurrentCategory.Visible = false
 			end
 
+			for _,Button in ipairs(Window.CategoryButtons) do
+				Button.Visible = false
+			end
 
-		end)
+			if Window.CategoryBar then
+				Window.CategoryBar.Visible = false
+			end
 
+			Page.Visible = true
 
-	end
+		else
 
+			Page.Visible = false
 
+			if Window.CategoryBar then
+				Window.CategoryBar.Visible = true
+			end
+
+			for _,Button in ipairs(Window.CategoryButtons) do
+				Button.Visible = true
+			end
+
+			if Window.LastCategory then
+				Window.LastCategory.Visible = true
+				Window.CurrentCategory = Window.LastCategory
+			end
+
+		end
+
+	end)
 
 end
