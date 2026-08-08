@@ -7,7 +7,7 @@
     Toute modification, redistribution, revente ou création de versions dérivées
     sans l'autorisation écrite de l'auteur est STRICTEMENT INTERDITE.
     
-    Pour lire la licence complète : https://github.com/Flashtynooo/Flshty-Hub/main/LICENSE
+    Pour lire la licence complète : https://github.com/Flashtynooo/Flshty-Hub/blob/main/LICENSE
 --]]
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/lib"))()
