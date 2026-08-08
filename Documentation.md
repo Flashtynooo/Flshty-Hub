@@ -1,6 +1,6 @@
 ## THE LIBRARY
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/.lib"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/lib"))()
 
 
 
