@@ -12,7 +12,6 @@ local Window = Library:CreateWindow("Flshty Hub")
 
 ## CATEGORIES
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Catégorie 1
 local MainTab = Window:AddCategory("Main")
 
 
