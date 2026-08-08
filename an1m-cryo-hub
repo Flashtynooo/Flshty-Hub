@@ -4,6 +4,12 @@ local UserInputService = game:GetService("UserInputService")
 local Library = {}
 
 function Library:CreateWindow(titleText)
+	-- Nettoyage si le Hub est déjà lancé (relance du script)
+	local oldGui = Players.LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("FlshtyHubUI")
+	if oldGui then
+		oldGui:Destroy()
+	end
+
 	-- ScreenGui Principale
 	local screenGui = Instance.new("ScreenGui")
 	screenGui.Name = "FlshtyHubUI"
@@ -18,6 +24,7 @@ function Library:CreateWindow(titleText)
 	home.Position = UDim2.new(0.5, -190, 0.5, -130)
 	home.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 	home.BorderSizePixel = 0
+	home.Visible = true
 	home.Parent = screenGui
 
 	local homeCorner = Instance.new("UICorner")
@@ -56,33 +63,33 @@ function Library:CreateWindow(titleText)
 	titleLabel.ZIndex = 4
 	titleLabel.Parent = dragger
 
-	-- Bouton Flottant Déplaçable (ImageButton avec Decal)
-	local openBtn = Instance.new("ImageButton")
-	openBtn.Name = "OpenHubBtn"
-	openBtn.Size = UDim2.new(0, 50, 0, 50)
-	openBtn.Position = UDim2.new(0, 20, 0.5, -25)
-	openBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	openBtn.BackgroundTransparency = 0.2
-	openBtn.Image = "rbxassetid://76126150119912"
-	openBtn.Visible = false -- Masqué au démarrage
-	openBtn.Parent = screenGui
+	-- Bouton Flottant Déplaçable avec Decal (Pour réouvrir le Hub)
+	local toggleOpenBtn = Instance.new("ImageButton")
+	toggleOpenBtn.Name = "ToggleOpenBtn"
+	toggleOpenBtn.Size = UDim2.new(0, 50, 0, 50)
+	toggleOpenBtn.Position = UDim2.new(0, 15, 0.5, -25)
+	toggleOpenBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	toggleOpenBtn.BackgroundTransparency = 0.2
+	toggleOpenBtn.Image = "rbxassetid://76126150119912"
+	toggleOpenBtn.Visible = false -- Masqué au démarrage car le Hub est ouvert
+	toggleOpenBtn.Parent = screenGui
 
 	local openCorner = Instance.new("UICorner")
-	openCorner.CornerRadius = UDim.new(0, 10)
-	openCorner.Parent = openBtn
+	openCorner.CornerRadius = UDim.new(1, 0)
+	openCorner.Parent = toggleOpenBtn
 
 	local openStroke = Instance.new("UIStroke")
 	openStroke.Thickness = 2
 	openStroke.Color = Color3.fromRGB(0, 255, 22)
-	openStroke.Parent = openBtn
+	openStroke.Parent = toggleOpenBtn
 
-	-- Fonction de Toggle
+	-- Fonction d'alternance de visibilité
 	local function setHubVisible(visible)
 		home.Visible = visible
-		openBtn.Visible = not visible
+		toggleOpenBtn.Visible = not visible
 	end
 
-	-- Bouton Fermer (Rend le Hub invisible et affiche le bouton image)
+	-- Bouton Fermer (X) -> Rend le Hub INVISIBLE (Ne détruit rien)
 	local closeBtn = Instance.new("TextButton")
 	closeBtn.Name = "CloseBtn"
 	closeBtn.Size = UDim2.new(0, 25, 0, 25)
@@ -103,7 +110,7 @@ function Library:CreateWindow(titleText)
 		setHubVisible(false)
 	end)
 
-	openBtn.MouseButton1Click:Connect(function()
+	toggleOpenBtn.MouseButton1Click:Connect(function()
 		setHubVisible(true)
 	end)
 
@@ -115,7 +122,37 @@ function Library:CreateWindow(titleText)
 		end
 	end)
 
-	-- Système de Dragging pour le Hub
+	-- Script de déplacement du Bouton Decal (Draggable)
+	task.spawn(function()
+		local dragging = false
+		local dragStart, startPos
+
+		toggleOpenBtn.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				dragging = true
+				dragStart = input.Position
+				startPos = toggleOpenBtn.Position
+			end
+		end)
+
+		toggleOpenBtn.InputEnded:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				dragging = false
+			end
+		end)
+
+		UserInputService.InputChanged:Connect(function(input)
+			if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+				local delta = input.Position - dragStart
+				toggleOpenBtn.Position = UDim2.new(
+					startPos.X.Scale, startPos.X.Offset + delta.X,
+					startPos.Y.Scale, startPos.Y.Offset + delta.Y
+				)
+			end
+		end)
+	end)
+
+	-- Déplacement de la fenêtre du Hub
 	task.spawn(function()
 		local dragging = false
 		local dragStart, startPos
@@ -140,36 +177,6 @@ function Library:CreateWindow(titleText)
 				home.Position = UDim2.new(
 					startPos.X.Scale, startPos.X.Offset + delta.X,
 					startPos.Y.Scale, startPos.Y.Offset + delta.Y
-				)
-			end
-		end)
-	end)
-
-	-- Système de Dragging pour le Bouton Image
-	task.spawn(function()
-		local draggingBtn = false
-		local dragStartBtn, startPosBtn
-
-		openBtn.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				draggingBtn = true
-				dragStartBtn = input.Position
-				startPosBtn = openBtn.Position
-			end
-		end)
-
-		openBtn.InputEnded:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				draggingBtn = false
-			end
-		end)
-
-		UserInputService.InputChanged:Connect(function(input)
-			if draggingBtn and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-				local delta = input.Position - dragStartBtn
-				openBtn.Position = UDim2.new(
-					startPosBtn.X.Scale, startPosBtn.X.Offset + delta.X,
-					startPosBtn.Y.Scale, startPosBtn.Y.Offset + delta.Y
 				)
 			end
 		end)
@@ -335,15 +342,14 @@ function Library:CreateWindow(titleText)
 			indCorner.CornerRadius = UDim.new(0, 4)
 			indCorner.Parent = indicator
 
-			local function toggle()
+			indicator.MouseButton1Click:Connect(function()
 				state = not state
 				indicator.BackgroundColor3 = state and Color3.fromRGB(0, 255, 22) or Color3.fromRGB(60, 60, 60)
 				indicator.Text = state and "ON" or "OFF"
 				indicator.TextColor3 = state and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 255, 255)
 				pcall(callback, state)
-			end
+			end)
 
-			indicator.MouseButton1Click:Connect(toggle)
 			return toggleFrame
 		end
 
