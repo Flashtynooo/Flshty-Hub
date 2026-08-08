@@ -24,7 +24,7 @@ function Library:CreateWindow(titleText)
 	home.Position = UDim2.new(0.5, -190, 0.5, -130)
 	home.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 	home.BorderSizePixel = 0
-	home.Visible = true -- Hub ouvert par défaut
+	home.Visible = true
 	home.Parent = screenGui
 
 	local homeCorner = Instance.new("UICorner")
@@ -36,7 +36,7 @@ function Library:CreateWindow(titleText)
 	uiStroke.Color = Color3.fromRGB(0, 255, 22)
 	uiStroke.Parent = home
 
-	-- Barre supérieure (Dragger)
+	-- Barre supérieure
 	local dragger = Instance.new("Frame")
 	dragger.Name = "Dragger"
 	dragger.Size = UDim2.new(1, 0, 0, 35)
@@ -63,7 +63,10 @@ function Library:CreateWindow(titleText)
 	titleLabel.ZIndex = 4
 	titleLabel.Parent = dragger
 
-	-- Bouton Flottant (Pour ouvrir le Hub)
+	-- =========================================================
+	-- BOUTON FLOTTANT POUR ROUVRIR LE HUB
+	-- =========================================================
+
 	local toggleOpenBtn = Instance.new("ImageButton")
 	toggleOpenBtn.Name = "ToggleOpenBtn"
 	toggleOpenBtn.Size = UDim2.new(0, 50, 0, 50)
@@ -71,7 +74,8 @@ function Library:CreateWindow(titleText)
 	toggleOpenBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	toggleOpenBtn.BackgroundTransparency = 0.2
 	toggleOpenBtn.Image = "rbxassetid://76126150119912"
-	toggleOpenBtn.Visible = false -- Masqué au départ car le Hub est OUVERT
+	toggleOpenBtn.Visible = false
+	toggleOpenBtn.ZIndex = 10
 	toggleOpenBtn.Parent = screenGui
 
 	local openCorner = Instance.new("UICorner")
@@ -83,13 +87,31 @@ function Library:CreateWindow(titleText)
 	openStroke.Color = Color3.fromRGB(0, 255, 22)
 	openStroke.Parent = toggleOpenBtn
 
-	-- Fonction unique d'alternance strict
+	-- =========================================================
+	-- FONCTION DE VISIBILITÉ
+	-- =========================================================
+	-- IMPORTANT :
+	-- On ne Destroy() JAMAIS le HOME ici.
+	-- On change uniquement Visible.
+	--
+	-- visible = true :
+	-- HOME visible
+	-- bouton flottant invisible
+	--
+	-- visible = false :
+	-- HOME invisible
+	-- bouton flottant visible
+	-- =========================================================
+
 	local function setHubVisible(visible)
 		home.Visible = visible
 		toggleOpenBtn.Visible = not visible
 	end
 
-	-- Bouton Fermer (X Rouge)
+	-- =========================================================
+	-- BOUTON X POUR FERMER LE HUB
+	-- =========================================================
+
 	local closeBtn = Instance.new("TextButton")
 	closeBtn.Name = "CloseBtn"
 	closeBtn.Size = UDim2.new(0, 25, 0, 25)
@@ -106,27 +128,49 @@ function Library:CreateWindow(titleText)
 	closeCorner.CornerRadius = UDim.new(0, 4)
 	closeCorner.Parent = closeBtn
 
-	-- Actions des boutons
+	-- Clic sur X = cache uniquement le Hub
 	closeBtn.MouseButton1Click:Connect(function()
-		setHubVisible(false) -- Cache le hub, montre le bouton
+		setHubVisible(false)
 	end)
 
-	-- Touche Clavier (Raccourci "-")
+	-- =========================================================
+	-- CLIC SUR LE BOUTON FLOTTANT = ROUVRE LE HUB
+	-- =========================================================
+
+	toggleOpenBtn.MouseButton1Click:Connect(function()
+		setHubVisible(true)
+	end)
+
+	-- =========================================================
+	-- RACCOURCI CLAVIER "-"
+	-- =========================================================
+
 	UserInputService.InputBegan:Connect(function(input, gpe)
-		if gpe then return end
-		if input.KeyCode == Enum.KeyCode.Minus or input.KeyCode == Enum.KeyCode.KeypadMinus then
+		if gpe then
+			return
+		end
+
+		if input.KeyCode == Enum.KeyCode.Minus
+			or input.KeyCode == Enum.KeyCode.KeypadMinus then
+
 			setHubVisible(not home.Visible)
 		end
 	end)
 
-	-- Déplacement du Bouton Flottant (sans déclencher le clic par erreur)
+	-- =========================================================
+	-- DÉPLACEMENT DU BOUTON FLOTTANT
+	-- =========================================================
+
 	task.spawn(function()
 		local dragging = false
 		local hasMoved = false
-		local dragStart, startPos
+		local dragStart
+		local startPos
 
 		toggleOpenBtn.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			if input.UserInputType == Enum.UserInputType.MouseButton1
+				or input.UserInputType == Enum.UserInputType.Touch then
+
 				dragging = true
 				hasMoved = false
 				dragStart = input.Position
@@ -135,9 +179,13 @@ function Library:CreateWindow(titleText)
 		end)
 
 		toggleOpenBtn.InputEnded:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			if input.UserInputType == Enum.UserInputType.MouseButton1
+				or input.UserInputType == Enum.UserInputType.Touch then
+
 				dragging = false
-				-- Si l'utilisateur n'a PAS déplacé le bouton, alors c'est un vrai CLIC
+
+				-- Si le bouton n'a pas été déplacé,
+				-- alors c'était un vrai clic.
 				if not hasMoved then
 					setHubVisible(true)
 				end
@@ -145,26 +193,42 @@ function Library:CreateWindow(titleText)
 		end)
 
 		UserInputService.InputChanged:Connect(function(input)
-			if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+			if dragging
+				and (
+					input.UserInputType == Enum.UserInputType.MouseMovement
+					or input.UserInputType == Enum.UserInputType.Touch
+				) then
+
 				local delta = input.Position - dragStart
+
 				if delta.Magnitude > 5 then
 					hasMoved = true
 				end
+
 				toggleOpenBtn.Position = UDim2.new(
-					startPos.X.Scale, startPos.X.Offset + delta.X,
-					startPos.Y.Scale, startPos.Y.Offset + delta.Y
+					startPos.X.Scale,
+					startPos.X.Offset + delta.X,
+
+					startPos.Y.Scale,
+					startPos.Y.Offset + delta.Y
 				)
 			end
 		end)
 	end)
 
-	-- Déplacement de la fenêtre principale (HOME)
+	-- =========================================================
+	-- DÉPLACEMENT DE LA FENÊTRE PRINCIPALE
+	-- =========================================================
+
 	task.spawn(function()
 		local dragging = false
-		local dragStart, startPos
+		local dragStart
+		local startPos
 
 		dragger.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			if input.UserInputType == Enum.UserInputType.MouseButton1
+				or input.UserInputType == Enum.UserInputType.Touch then
+
 				dragging = true
 				dragStart = input.Position
 				startPos = home.Position
@@ -172,23 +236,37 @@ function Library:CreateWindow(titleText)
 		end)
 
 		dragger.InputEnded:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			if input.UserInputType == Enum.UserInputType.MouseButton1
+				or input.UserInputType == Enum.UserInputType.Touch then
+
 				dragging = false
 			end
 		end)
 
 		UserInputService.InputChanged:Connect(function(input)
-			if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+			if dragging
+				and (
+					input.UserInputType == Enum.UserInputType.MouseMovement
+					or input.UserInputType == Enum.UserInputType.Touch
+				) then
+
 				local delta = input.Position - dragStart
+
 				home.Position = UDim2.new(
-					startPos.X.Scale, startPos.X.Offset + delta.X,
-					startPos.Y.Scale, startPos.Y.Offset + delta.Y
+					startPos.X.Scale,
+					startPos.X.Offset + delta.X,
+
+					startPos.Y.Scale,
+					startPos.Y.Offset + delta.Y
 				)
 			end
 		end)
 	end)
 
-	-- Zone des Onglets
+	-- =========================================================
+	-- ZONE DES ONGLETS
+	-- =========================================================
+
 	local categoryBar = Instance.new("ScrollingFrame")
 	categoryBar.Name = "CategoryBar"
 	categoryBar.Size = UDim2.new(1, -20, 0, 30)
@@ -213,7 +291,10 @@ function Library:CreateWindow(titleText)
 	catPadding.PaddingRight = UDim.new(0, 5)
 	catPadding.Parent = categoryBar
 
-	-- Conteneur des Pages
+	-- =========================================================
+	-- CONTENEUR DES PAGES
+	-- =========================================================
+
 	local pagesContainer = Instance.new("Frame")
 	pagesContainer.Name = "PagesContainer"
 	pagesContainer.Size = UDim2.new(1, -20, 1, -80)
@@ -221,7 +302,10 @@ function Library:CreateWindow(titleText)
 	pagesContainer.BackgroundTransparency = 1
 	pagesContainer.Parent = home
 
-	-- Gestionnaire de fenêtres
+	-- =========================================================
+	-- GESTIONNAIRE DE FENÊTRES
+	-- =========================================================
+
 	local WindowHandler = {
 		Pages = {},
 		ActivePage = nil
@@ -278,13 +362,17 @@ function Library:CreateWindow(titleText)
 				p.Button.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 				p.Button.TextColor3 = Color3.fromRGB(200, 200, 200)
 			end
+
 			pageScroll.Visible = true
 			catBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 22)
 			catBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
 			WindowHandler.ActivePage = pageScroll
 		end)
 
-		table.insert(WindowHandler.Pages, {Page = pageScroll, Button = catBtn})
+		table.insert(WindowHandler.Pages, {
+			Page = pageScroll,
+			Button = catBtn
+		})
 
 		local PageElements = {}
 
@@ -337,9 +425,16 @@ function Library:CreateWindow(titleText)
 			local indicator = Instance.new("TextButton")
 			indicator.Size = UDim2.new(0, 45, 0, 22)
 			indicator.Position = UDim2.new(1, -50, 0.5, -11)
-			indicator.BackgroundColor3 = state and Color3.fromRGB(0, 255, 22) or Color3.fromRGB(60, 60, 60)
+			indicator.BackgroundColor3 = state
+				and Color3.fromRGB(0, 255, 22)
+				or Color3.fromRGB(60, 60, 60)
+
 			indicator.Text = state and "ON" or "OFF"
-			indicator.TextColor3 = state and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 255, 255)
+
+			indicator.TextColor3 = state
+				and Color3.fromRGB(0, 0, 0)
+				or Color3.fromRGB(255, 255, 255)
+
 			indicator.Font = Enum.Font.SourceSansBold
 			indicator.TextSize = 12
 			indicator.Parent = toggleFrame
@@ -350,9 +445,17 @@ function Library:CreateWindow(titleText)
 
 			indicator.MouseButton1Click:Connect(function()
 				state = not state
-				indicator.BackgroundColor3 = state and Color3.fromRGB(0, 255, 22) or Color3.fromRGB(60, 60, 60)
+
+				indicator.BackgroundColor3 = state
+					and Color3.fromRGB(0, 255, 22)
+					or Color3.fromRGB(60, 60, 60)
+
 				indicator.Text = state and "ON" or "OFF"
-				indicator.TextColor3 = state and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 255, 255)
+
+				indicator.TextColor3 = state
+					and Color3.fromRGB(0, 0, 0)
+					or Color3.fromRGB(255, 255, 255)
+
 				pcall(callback, state)
 			end)
 
