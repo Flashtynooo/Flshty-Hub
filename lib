@@ -1,15 +1,45 @@
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
+local CoreGui = game:GetService("CoreGui")
+
+-- 1. NETTOYAGE / AUTO-DESTRUCTION DE L'ANCIEN HUB
+if getgenv().FlshtyHubInstance then
+	if typeof(getgenv().FlshtyHubInstance) == "Instance" then
+		getgenv().FlshtyHubInstance:Destroy()
+	end
+	getgenv().FlshtyHubInstance = nil
+end
+
+-- Fonction pour générer un nom aléatoire unique à chaque exécution
+local function generateRandomName(length)
+	local chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	local result = ""
+	for i = 1, length or 12 do
+		local rand = math.random(1, #chars)
+		result = result .. string.sub(chars, rand, rand)
+	end
+	return "" .. result
+end
 
 local Library = {}
 
 function Library:CreateWindow(titleText)
-	-- ScreenGui Principale
+	-- 2. CRÉATION DU SCREENGUI DANS COREGUI AVEC UN NOM ALÉATOIRE
 	local screenGui = Instance.new("ScreenGui")
-	screenGui.Name = "FlshtyHubUI"
+	screenGui.Name = generateRandomName(12)
 	screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	screenGui.ResetOnSpawn = false
-	screenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+
+	-- Parentage dans CoreGui (avec sécurité vers PlayerGui si CoreGui échoue)
+	local success, err = pcall(function()
+		screenGui.Parent = CoreGui
+	end)
+	if not success then
+		screenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+	end
+
+	-- Sauvegarde dans l'environnement global pour la future auto-destruction
+	getgenv().FlshtyHubInstance = screenGui
 
 	-- Fenêtre Principale (HOME)
 	local home = Instance.new("Frame")
@@ -56,14 +86,14 @@ function Library:CreateWindow(titleText)
 	titleLabel.ZIndex = 4
 	titleLabel.Parent = dragger
 
--- Bouton Flottant (Image Button avec Decal ID)
+	-- Bouton Flottant
 	local toggleOpenBtn = Instance.new("ImageButton")
 	toggleOpenBtn.Name = "ToggleOpenBtn"
 	toggleOpenBtn.Size = UDim2.new(0, 45, 0, 45)
 	toggleOpenBtn.Position = UDim2.new(0, 15, 0.5, -22)
 	toggleOpenBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 	toggleOpenBtn.Image = "rbxthumb://type=Asset&id=80777483293351&w=150&h=150"
-	toggleOpenBtn.Visible = false -- Masqué au départ car le Hub est ouvert
+	toggleOpenBtn.Visible = false
 	toggleOpenBtn.ZIndex = 10
 	toggleOpenBtn.Parent = screenGui
 
@@ -75,6 +105,12 @@ function Library:CreateWindow(titleText)
 	openStroke.Thickness = 2
 	openStroke.Color = Color3.fromRGB(0, 255, 22)
 	openStroke.Parent = toggleOpenBtn
+
+	-- Fonction de gestion de visibilité
+	local function setHubVisible(state)
+		home.Visible = state
+		toggleOpenBtn.Visible = not state
+	end
 
 	-- Déplacement du Bouton Flottant (Drag & Drop)
 	task.spawn(function()
@@ -101,7 +137,7 @@ function Library:CreateWindow(titleText)
 			if btnDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
 				local delta = input.Position - btnDragStart
 				if math.abs(delta.X) > 3 or math.abs(delta.Y) > 3 then
-					hasMoved = true -- Empêche de déclencher le clic si on est en train de glisser le bouton
+					hasMoved = true
 				end
 				toggleOpenBtn.Position = UDim2.new(
 					btnStartPos.X.Scale, btnStartPos.X.Offset + delta.X,
@@ -110,7 +146,6 @@ function Library:CreateWindow(titleText)
 			end
 		end)
 
-		-- Ouvrir le Hub uniquement en cas de simple clic/pression (pas après un glisser)
 		toggleOpenBtn.MouseButton1Click:Connect(function()
 			if not hasMoved then
 				setHubVisible(true)
@@ -118,22 +153,7 @@ function Library:CreateWindow(titleText)
 		end)
 	end)
 
-	local openCorner = Instance.new("UICorner")
-	openCorner.CornerRadius = UDim.new(1, 0)
-	openCorner.Parent = toggleOpenBtn
-
-	local openStroke = Instance.new("UIStroke")
-	openStroke.Thickness = 2
-	openStroke.Color = Color3.fromRGB(0, 255, 22)
-	openStroke.Parent = toggleOpenBtn
-
-	-- Fonction de gestion de visibilité synchronisée
-	local function setHubVisible(state)
-		home.Visible = state
-		toggleOpenBtn.Visible = not state
-	end
-
-	-- Bouton Fermer (X) -> Rend uniquement invisible
+	-- Bouton Fermer (X)
 	local closeBtn = Instance.new("TextButton")
 	closeBtn.Name = "CloseBtn"
 	closeBtn.Size = UDim2.new(0, 25, 0, 25)
@@ -154,11 +174,7 @@ function Library:CreateWindow(titleText)
 		setHubVisible(false)
 	end)
 
-	toggleOpenBtn.MouseButton1Click:Connect(function()
-		setHubVisible(true)
-	end)
-
-	-- Touche Clavier (PC: Touche "-")
+	-- Raccourci Clavier ("-")
 	UserInputService.InputBegan:Connect(function(input, gpe)
 		if gpe then return end
 		if input.KeyCode == Enum.KeyCode.Minus or input.KeyCode == Enum.KeyCode.KeypadMinus then
@@ -166,7 +182,7 @@ function Library:CreateWindow(titleText)
 		end
 	end)
 
-	-- Zone des Onglets (Catégories)
+	-- Zone des Onglets
 	local categoryBar = Instance.new("ScrollingFrame")
 	categoryBar.Name = "CategoryBar"
 	categoryBar.Size = UDim2.new(1, -20, 0, 30)
@@ -199,7 +215,7 @@ function Library:CreateWindow(titleText)
 	pagesContainer.BackgroundTransparency = 1
 	pagesContainer.Parent = home
 
-	-- Déplacement de la fenêtre
+	-- Déplacement de la fenêtre principale
 	task.spawn(function()
 		local dragging = false
 		local dragStart, startPos
