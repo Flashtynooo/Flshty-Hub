@@ -56,16 +56,67 @@ function Library:CreateWindow(titleText)
 	titleLabel.ZIndex = 4
 	titleLabel.Parent = dragger
 
-	-- Bouton Flottant (Image Button avec Decal ID)
+-- Bouton Flottant (Image Button avec Decal ID)
 	local toggleOpenBtn = Instance.new("ImageButton")
 	toggleOpenBtn.Name = "ToggleOpenBtn"
 	toggleOpenBtn.Size = UDim2.new(0, 45, 0, 45)
 	toggleOpenBtn.Position = UDim2.new(0, 15, 0.5, -22)
 	toggleOpenBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-	toggleOpenBtn.Image = "rbxassetid://80777483293351"
+	toggleOpenBtn.Image = "rbxthumb://type=Asset&id=80777483293351&w=150&h=150"
 	toggleOpenBtn.Visible = false -- Masqué au départ car le Hub est ouvert
 	toggleOpenBtn.ZIndex = 10
 	toggleOpenBtn.Parent = screenGui
+
+	local openCorner = Instance.new("UICorner")
+	openCorner.CornerRadius = UDim.new(1, 0)
+	openCorner.Parent = toggleOpenBtn
+
+	local openStroke = Instance.new("UIStroke")
+	openStroke.Thickness = 2
+	openStroke.Color = Color3.fromRGB(0, 255, 22)
+	openStroke.Parent = toggleOpenBtn
+
+	-- Déplacement du Bouton Flottant (Drag & Drop)
+	task.spawn(function()
+		local btnDragging = false
+		local btnDragStart, btnStartPos
+		local hasMoved = false
+
+		toggleOpenBtn.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				btnDragging = true
+				hasMoved = false
+				btnDragStart = input.Position
+				btnStartPos = toggleOpenBtn.Position
+			end
+		end)
+
+		toggleOpenBtn.InputEnded:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				btnDragging = false
+			end
+		end)
+
+		UserInputService.InputChanged:Connect(function(input)
+			if btnDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+				local delta = input.Position - btnDragStart
+				if math.abs(delta.X) > 3 or math.abs(delta.Y) > 3 then
+					hasMoved = true -- Empêche de déclencher le clic si on est en train de glisser le bouton
+				end
+				toggleOpenBtn.Position = UDim2.new(
+					btnStartPos.X.Scale, btnStartPos.X.Offset + delta.X,
+					btnStartPos.Y.Scale, btnStartPos.Y.Offset + delta.Y
+				)
+			end
+		end)
+
+		-- Ouvrir le Hub uniquement en cas de simple clic/pression (pas après un glisser)
+		toggleOpenBtn.MouseButton1Click:Connect(function()
+			if not hasMoved then
+				setHubVisible(true)
+			end
+		end)
+	end)
 
 	local openCorner = Instance.new("UICorner")
 	openCorner.CornerRadius = UDim.new(1, 0)
