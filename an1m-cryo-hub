@@ -56,7 +56,33 @@ function Library:CreateWindow(titleText)
 	titleLabel.ZIndex = 4
 	titleLabel.Parent = dragger
 
-	-- Bouton Fermer (X)
+	-- Bouton Flottant Déplaçable (ImageButton avec Decal)
+	local openBtn = Instance.new("ImageButton")
+	openBtn.Name = "OpenHubBtn"
+	openBtn.Size = UDim2.new(0, 50, 0, 50)
+	openBtn.Position = UDim2.new(0, 20, 0.5, -25)
+	openBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	openBtn.BackgroundTransparency = 0.2
+	openBtn.Image = "rbxassetid://76126150119912"
+	openBtn.Visible = false -- Masqué au démarrage
+	openBtn.Parent = screenGui
+
+	local openCorner = Instance.new("UICorner")
+	openCorner.CornerRadius = UDim.new(0, 10)
+	openCorner.Parent = openBtn
+
+	local openStroke = Instance.new("UIStroke")
+	openStroke.Thickness = 2
+	openStroke.Color = Color3.fromRGB(0, 255, 22)
+	openStroke.Parent = openBtn
+
+	-- Fonction de Toggle
+	local function setHubVisible(visible)
+		home.Visible = visible
+		openBtn.Visible = not visible
+	end
+
+	-- Bouton Fermer (Rend le Hub invisible et affiche le bouton image)
 	local closeBtn = Instance.new("TextButton")
 	closeBtn.Name = "CloseBtn"
 	closeBtn.Size = UDim2.new(0, 25, 0, 25)
@@ -74,7 +100,79 @@ function Library:CreateWindow(titleText)
 	closeCorner.Parent = closeBtn
 
 	closeBtn.MouseButton1Click:Connect(function()
-		screenGui:Destroy()
+		setHubVisible(false)
+	end)
+
+	openBtn.MouseButton1Click:Connect(function()
+		setHubVisible(true)
+	end)
+
+	-- Touche Clavier (PC: Touche "-")
+	UserInputService.InputBegan:Connect(function(input, gpe)
+		if gpe then return end
+		if input.KeyCode == Enum.KeyCode.Minus or input.KeyCode == Enum.KeyCode.KeypadMinus then
+			setHubVisible(not home.Visible)
+		end
+	end)
+
+	-- Système de Dragging pour le Hub
+	task.spawn(function()
+		local dragging = false
+		local dragStart, startPos
+
+		dragger.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				dragging = true
+				dragStart = input.Position
+				startPos = home.Position
+			end
+		end)
+
+		dragger.InputEnded:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				dragging = false
+			end
+		end)
+
+		UserInputService.InputChanged:Connect(function(input)
+			if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+				local delta = input.Position - dragStart
+				home.Position = UDim2.new(
+					startPos.X.Scale, startPos.X.Offset + delta.X,
+					startPos.Y.Scale, startPos.Y.Offset + delta.Y
+				)
+			end
+		end)
+	end)
+
+	-- Système de Dragging pour le Bouton Image
+	task.spawn(function()
+		local draggingBtn = false
+		local dragStartBtn, startPosBtn
+
+		openBtn.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				draggingBtn = true
+				dragStartBtn = input.Position
+				startPosBtn = openBtn.Position
+			end
+		end)
+
+		openBtn.InputEnded:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				draggingBtn = false
+			end
+		end)
+
+		UserInputService.InputChanged:Connect(function(input)
+			if draggingBtn and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+				local delta = input.Position - dragStartBtn
+				openBtn.Position = UDim2.new(
+					startPosBtn.X.Scale, startPosBtn.X.Offset + delta.X,
+					startPosBtn.Y.Scale, startPosBtn.Y.Offset + delta.Y
+				)
+			end
+		end)
 	end)
 
 	-- Zone des Onglets (Catégories)
@@ -110,67 +208,6 @@ function Library:CreateWindow(titleText)
 	pagesContainer.BackgroundTransparency = 1
 	pagesContainer.Parent = home
 
-	-- Bouton Flottant (Réouverture Mobile)
-	local toggleOpenBtn = Instance.new("TextButton")
-	toggleOpenBtn.Name = "ToggleOpenBtn"
-	toggleOpenBtn.Size = UDim2.new(0, 45, 0, 45)
-	toggleOpenBtn.Position = UDim2.new(0, 15, 0.5, -22)
-	toggleOpenBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 22)
-	toggleOpenBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
-	toggleOpenBtn.Text = "HUB"
-	toggleOpenBtn.Font = Enum.Font.SourceSansBold
-	toggleOpenBtn.TextSize = 14
-	toggleOpenBtn.Visible = true
-	toggleOpenBtn.Parent = screenGui
-
-	local openCorner = Instance.new("UICorner")
-	openCorner.CornerRadius = UDim.new(1, 0)
-	openCorner.Parent = toggleOpenBtn
-
-	local function toggleVisibility()
-		home.Visible = not home.Visible
-	end
-
-	toggleOpenBtn.MouseButton1Click:Connect(toggleVisibility)
-
-	-- Touche Clavier (PC: Touche "-")
-	UserInputService.InputBegan:Connect(function(input, gpe)
-		if gpe then return end
-		if input.KeyCode == Enum.KeyCode.Minus or input.KeyCode == Enum.KeyCode.KeypadMinus then
-			toggleVisibility()
-		end
-	end)
-
-	-- Déplacement de la fenêtre
-	task.spawn(function()
-		local dragging = false
-		local dragStart, startPos
-
-		dragger.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				dragging = true
-				dragStart = input.Position
-				startPos = home.Position
-			end
-		end)
-
-		dragger.InputEnded:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				dragging = false
-			end
-		end)
-
-		UserInputService.InputChanged:Connect(function(input)
-			if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-				local delta = input.Position - dragStart
-				home.Position = UDim2.new(
-					startPos.X.Scale, startPos.X.Offset + delta.X,
-					startPos.Y.Scale, startPos.Y.Offset + delta.Y
-				)
-			end
-		end)
-	end)
-
 	-- Gestionnaire de fenêtres et catégories
 	local WindowHandler = {
 		Pages = {},
@@ -178,7 +215,6 @@ function Library:CreateWindow(titleText)
 	}
 
 	function WindowHandler:AddCategory(categoryName)
-		-- Bouton de la catégorie
 		local catBtn = Instance.new("TextButton")
 		catBtn.Name = categoryName
 		catBtn.Size = UDim2.new(0, 90, 0, 24)
@@ -193,7 +229,6 @@ function Library:CreateWindow(titleText)
 		btnCorner.CornerRadius = UDim.new(0, 4)
 		btnCorner.Parent = catBtn
 
-		-- Page ScrollingFrame dédiée
 		local pageScroll = Instance.new("ScrollingFrame")
 		pageScroll.Name = categoryName .. "_Page"
 		pageScroll.Size = UDim2.new(1, 0, 1, 0)
@@ -217,7 +252,6 @@ function Library:CreateWindow(titleText)
 		pagePadding.PaddingBottom = UDim.new(0, 5)
 		pagePadding.Parent = pageScroll
 
-		-- Activation de la première catégorie créée
 		if not WindowHandler.ActivePage then
 			WindowHandler.ActivePage = pageScroll
 			pageScroll.Visible = true
@@ -237,13 +271,8 @@ function Library:CreateWindow(titleText)
 			WindowHandler.ActivePage = pageScroll
 		end)
 
-		local categoryObj = {
-			Page = pageScroll,
-			Button = catBtn
-		}
-		table.insert(WindowHandler.Pages, categoryObj)
+		table.insert(WindowHandler.Pages, {Page = pageScroll, Button = catBtn})
 
-		-- Fonctions d'éléments dans la page
 		local PageElements = {}
 
 		function PageElements:AddButton(text, callback)
