@@ -62,7 +62,7 @@ function Library:CreateWindow(titleText)
 	toggleOpenBtn.Size = UDim2.new(0, 45, 0, 45)
 	toggleOpenBtn.Position = UDim2.new(0, 15, 0.5, -22)
 	toggleOpenBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-	toggleOpenBtn.Image = "rbxassetid://76126150119912"
+	toggleOpenBtn.Image = "rbxassetid://80777483293351"
 	toggleOpenBtn.Visible = false -- Masqué au départ car le Hub est ouvert
 	toggleOpenBtn.ZIndex = 10
 	toggleOpenBtn.Parent = screenGui
