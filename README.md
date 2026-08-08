@@ -3,7 +3,7 @@
 Bibliothèque Lua créée par Flashtynooo.
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/lib"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/.lua"))()
 
 local Window = Library:CreateWindow("Flshty Hub")
 
