@@ -19,7 +19,7 @@ local MainTab = Window:AddCategory("Main")
 ## BUTTON CLICK
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 MainTab:AddButton("instant button", function()
-    print("Action exécutée !")
+    --code
 end)
 
 
