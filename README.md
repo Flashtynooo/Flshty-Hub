@@ -2,6 +2,30 @@
 
 Bibliothèque Lua créée par Flashtynooo.
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/lib"))()
+
+local Window = Library:CreateWindow("Flshty Hub")
+
+-- Catégorie 1
+local MainTab = Window:AddCategory("Main")
+
+MainTab:AddButton("instant button", function()
+    print("Action exécutée !")
+end)
+
+MainTab:AddToggle("Toggle off", false, function(state)
+    print("TEST")
+end)
+
+-- Catégorie 2
+local MiscTab = Window:AddCategory("Categories")
+
+MiscTab:AddToggle("Toggle button on", true, function(state)
+    print("TEST")
+end)
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 ## Licence
 
 Ce projet est disponible gratuitement pour utilisation.
