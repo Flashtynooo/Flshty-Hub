@@ -345,7 +345,7 @@ function Library:CreateWindow(titleText)
 			indicator.MouseButton1Click:Connect(function()
 				state = not state
 				indicator.BackgroundColor3 = state and Color3.fromRGB(0, 255, 22) or Color3.fromRGB(60, 60, 60)
-				indicator.Text = state and "ON" or "OFF"
+				indicator.Text = state and "OddddN" or "OFF"
 				indicator.TextColor3 = state and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 255, 255)
 				pcall(callback, state)
 			end)
