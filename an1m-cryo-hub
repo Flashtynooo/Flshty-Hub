@@ -69,7 +69,7 @@ homeStart2.Parent = startHub
 -- 3. Création du titre
 local nameLabel = Instance.new("TextLabel")
 nameLabel.Name = "name"
-nameLabel.Text = "CRYO HUB"
+nameLabel.Text = "FLASHTYNOOO HUB"
 nameLabel.TextSize = 14
 nameLabel.TextScaled = true
 nameLabel.TextWrapped = true
