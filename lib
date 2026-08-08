@@ -56,7 +56,7 @@ function Library:CreateWindow(titleText)
 	titleLabel.ZIndex = 4
 	titleLabel.Parent = dragger
 
-	-- Bouton Fermer (X)
+	-- Bouton Fermer (Rend INVISIBLE uniquement, ne DÉTRUIT PAS)
 	local closeBtn = Instance.new("TextButton")
 	closeBtn.Name = "CloseBtn"
 	closeBtn.Size = UDim2.new(0, 25, 0, 25)
@@ -74,7 +74,7 @@ function Library:CreateWindow(titleText)
 	closeCorner.Parent = closeBtn
 
 	closeBtn.MouseButton1Click:Connect(function()
-		screenGui:Destroy()
+		home.Visible = false
 	end)
 
 	-- Zone des Onglets (Catégories)
@@ -110,7 +110,7 @@ function Library:CreateWindow(titleText)
 	pagesContainer.BackgroundTransparency = 1
 	pagesContainer.Parent = home
 
-	-- Bouton Flottant (Réouverture Mobile)
+	-- Bouton Flottant (Réouverture Mobile / Écran)
 	local toggleOpenBtn = Instance.new("TextButton")
 	toggleOpenBtn.Name = "ToggleOpenBtn"
 	toggleOpenBtn.Size = UDim2.new(0, 45, 0, 45)
