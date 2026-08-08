@@ -1,0 +1,223 @@
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+
+local Library = {}
+
+function Library:CreateWindow(titleText)
+	-- ScreenGui Principale
+	local screenGui = Instance.new("ScreenGui")
+	screenGui.Name = "CyroLibrary"
+	screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	screenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+
+	-- Fenêtre Principale (HOME)
+	local home = Instance.new("Frame")
+	home.Name = "HOME"
+	home.Size = UDim2.new(0.25, 0, 0.45, 0)
+	home.Position = UDim2.new(0.5, 0, 0.5, 0)
+	home.AnchorPoint = Vector2.new(0.5, 0.5)
+	home.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	home.BorderSizePixel = 0
+	home.Parent = screenGui
+
+	local homeCorner = Instance.new("UICorner")
+	homeCorner.Parent = home
+
+	local uiStroke = Instance.new("UIStroke")
+	uiStroke.Thickness = 4
+	uiStroke.Color = Color3.fromRGB(255, 255, 255)
+	uiStroke.LineJoinMode = Enum.LineJoinMode.Bevel
+	uiStroke.Parent = home
+
+	-- Barre de déplacement (Dragger)
+	local dragger = Instance.new("Frame")
+	dragger.Name = "Dragger"
+	dragger.Size = UDim2.new(1, 0, 0.2, 0)
+	dragger.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	dragger.BorderSizePixel = 0
+	dragger.ZIndex = 3
+	dragger.Parent = home
+
+	local draggerCorner = Instance.new("UICorner")
+	draggerCorner.Parent = dragger
+
+	local titleLabel = Instance.new("TextLabel")
+	titleLabel.Name = "Title"
+	titleLabel.Size = UDim2.new(0.9, 0, 0.8, 0)
+	titleLabel.Position = UDim2.new(0.05, 0, 0.1, 0)
+	titleLabel.BackgroundTransparency = 1
+	titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	titleLabel.TextScaled = true
+	titleLabel.Font = Enum.Font.SourceSansBold
+	titleLabel.Text = titleText or "Cyro UI"
+	titleLabel.ZIndex = 4
+	titleLabel.Parent = dragger
+
+	local diviser = Instance.new("Frame")
+	diviser.Name = "Diviser"
+	diviser.Size = UDim2.new(1, 0, 0.1, 0)
+	diviser.Position = UDim2.new(0.5, 0, 1, 0)
+	diviser.AnchorPoint = Vector2.new(0.5, 0.5)
+	diviser.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	diviser.BorderSizePixel = 0
+	diviser.Parent = dragger
+
+	-- Zone centrale (Middle)
+	local middle = Instance.new("Frame")
+	middle.Name = "Middle"
+	middle.Size = UDim2.new(1, 0, 0.8, 0)
+	middle.Position = UDim2.new(0.5, 0, 0.6, 0)
+	middle.AnchorPoint = Vector2.new(0.5, 0.5)
+	middle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	middle.BorderSizePixel = 0
+	middle.ZIndex = 2
+	middle.Parent = home
+
+	local middleCorner = Instance.new("UICorner")
+	middleCorner.CornerRadius = UDim.new(0, 0)
+	middleCorner.Parent = middle
+
+	-- Barre horizontale de catégories
+	local scrlCat = Instance.new("ScrollingFrame")
+	scrlCat.Name = "scrl cat"
+	scrlCat.Size = UDim2.new(1, 0, 0.2, 0)
+	scrlCat.Position = UDim2.new(0.5, 0, 0.1, 0)
+	scrlCat.AnchorPoint = Vector2.new(0.5, 0.5)
+	scrlCat.BackgroundColor3 = Color3.fromRGB(0, 255, 22)
+	scrlCat.BorderSizePixel = 0
+	scrlCat.ScrollingDirection = Enum.ScrollingDirection.X
+	scrlCat.AutomaticCanvasSize = Enum.AutomaticSize.X
+	scrlCat.CanvasSize = UDim2.new(0, 0, 0, 0)
+	scrlCat.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
+	scrlCat.ZIndex = 2
+	scrlCat.Active = true
+	scrlCat.Parent = middle
+
+	local catLayout = Instance.new("UIListLayout")
+	catLayout.FillDirection = Enum.FillDirection.Horizontal
+	catLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+	catLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	catLayout.Padding = UDim.new(0, 5)
+	catLayout.Parent = scrlCat
+
+	local catPadding = Instance.new("UIPadding")
+	catPadding.PaddingLeft = UDim.new(0, 10)
+	catPadding.Parent = scrlCat
+
+	-- Zone d'affichage du contenu (Page)
+	local page = Instance.new("Frame")
+	page.Name = "Page"
+	page.Size = UDim2.new(1, 0, 0.8, 0)
+	page.Position = UDim2.new(0.5, 0, 0.6, 0)
+	page.AnchorPoint = Vector2.new(0.5, 0.5)
+	page.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	page.BorderSizePixel = 0
+	page.ZIndex = 0
+	page.Parent = middle
+
+	local scrlPag = Instance.new("ScrollingFrame")
+	scrlPag.Name = "scrl pag"
+	scrlPag.Size = UDim2.new(0.8, 0, 0.85, 0)
+	scrlPag.Position = UDim2.new(0.5, 0, 0.5, 0)
+	scrlPag.AnchorPoint = Vector2.new(0.5, 0.5)
+	scrlPag.BackgroundColor3 = Color3.fromRGB(8, 149, 6)
+	scrlPag.BorderSizePixel = 0
+	scrlPag.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
+	scrlPag.Active = true
+	scrlPag.Parent = page
+
+	local pageLayout = Instance.new("UIListLayout")
+	pageLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	pageLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	pageLayout.Padding = UDim.new(0, 5)
+	pageLayout.Parent = scrlPag
+
+	local pageCorner = Instance.new("UICorner")
+	pageCorner.CornerRadius = UDim.new(0, 3)
+	pageCorner.Parent = scrlPag
+
+	-- Système de Dragging
+	task.spawn(function()
+		local dragging = false
+		local dragStart, startPos
+
+		dragger.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				dragging = true
+				dragStart = input.Position
+				startPos = home.Position
+			end
+		end)
+
+		dragger.InputEnded:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				dragging = false
+			end
+		end)
+
+		UserInputService.InputChanged:Connect(function(input)
+			if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+				local delta = input.Position - dragStart
+				home.Position = UDim2.new(
+					startPos.X.Scale, startPos.X.Offset + delta.X,
+					startPos.Y.Scale, startPos.Y.Offset + delta.Y
+				)
+			end
+		end)
+	end)
+
+	-- Méthodes de la fenêtre
+	local WindowHandler = {}
+
+	function WindowHandler:AddCategory(categoryName)
+		local categories = Instance.new("Frame")
+		categories.Name = categoryName
+		categories.Size = UDim2.new(0, 80, 0, 30)
+		categories.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		categories.BorderSizePixel = 0
+		categories.Parent = scrlCat
+
+		local categoriesCorner = Instance.new("UICorner")
+		categoriesCorner.Parent = categories
+
+		local categoryBtn = Instance.new("TextButton")
+		categoryBtn.Name = "Btn"
+		categoryBtn.Text = categoryName
+		categoryBtn.Size = UDim2.new(1, 0, 1, 0)
+		categoryBtn.BackgroundTransparency = 1
+		categoryBtn.TextColor3 = Color3.fromRGB(0, 255, 22)
+		categoryBtn.TextSize = 14
+		categoryBtn.TextScaled = true
+		categoryBtn.RichText = true
+		categoryBtn.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+		categoryBtn.Parent = categories
+
+		return categoryBtn
+	end
+
+	function WindowHandler:AddButton(buttonText, callback)
+		local btn = Instance.new("TextButton")
+		btn.Name = buttonText
+		btn.Size = UDim2.new(0.9, 0, 0, 35)
+		btn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+		btn.Text = buttonText
+		btn.TextSize = 14
+		btn.Font = Enum.Font.SourceSansBold
+		btn.Parent = scrlPag
+
+		local btnCorner = Instance.new("UICorner")
+		btnCorner.CornerRadius = UDim.new(0, 4)
+		btnCorner.Parent = btn
+
+		btn.MouseButton1Click:Connect(function()
+			pcall(callback)
+		end)
+
+		return btn
+	end
+
+	return WindowHandler
+end
+
+return Library
