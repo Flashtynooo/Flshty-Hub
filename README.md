@@ -24,6 +24,7 @@ local MiscTab = Window:AddCategory("Categories")
 MiscTab:AddToggle("Toggle button on", true, function(state)
     print("TEST")
 end)
+
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Licence
