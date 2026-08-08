@@ -1,23 +1,23 @@
-# THE LIBRARY
+## THE LIBRARY
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Flashtynooo/Flshty-Hub/refs/heads/main/.lib"))()
 
 
 
-# CREATE WINDOWS - NAME OF THE WINDOWS
+## CREATE WINDOWS - NAME OF THE WINDOWS
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 local Window = Library:CreateWindow("Flshty Hub")
 
 
 
-# CATEGORIES
+## CATEGORIES
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Catégorie 1
 local MainTab = Window:AddCategory("Main")
 
 
 
-# BUTTON CLICK
+## BUTTON CLICK
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 MainTab:AddButton("instant button", function()
     print("Action exécutée !")
@@ -25,7 +25,7 @@ end)
 
 
 
-# TOGGLE BUTTON
+## TOGGLE BUTTON
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 MainTab:AddToggle("Toggle off", false, function(state)
     --code
